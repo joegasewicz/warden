@@ -1,5 +1,6 @@
 # Warden
 **Static Builder CLI**
+
 [![pub package](https://img.shields.io/pub/v/warden.svg)](https://pub.dev/packages/warden)
 [![Dart](https://img.shields.io/badge/Dart-3.7%2B-blue)](https://dart.dev)
 
