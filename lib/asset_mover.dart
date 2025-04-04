@@ -1,22 +1,27 @@
 import "dart:io";
 import "package:path/path.dart" as p;
+import "package:warden/conf/dependency.dart";
+import "package:warden/conf/destination.dart";
 
 class AssetMover {
-  AssetMover();
+
+  final Dependency dependencies;
+  final Destination destination;
+
+  AssetMover({
+    required this.dependencies,
+    required this.destination,
+  });
 
   void init() {
-    final nodeModules = Directory("../../web/node_modules");
-    final outputDir = Directory("../../web/static");
+    final nodeModules = Directory(dependencies.source);
+    final outputDir = Directory(destination.destination);
 
-    final filesToMove = [
-      'bootstrap/dist/js/bootstrap.min.js',
-      'bootstrap/dist/css/bootstrap.min.css',
-      'popper.js/dist/umd/popper.min.js',
-    ];
-
-    for (final relativePath in filesToMove) {
+    for (final relativePath in dependencies.files) {
       final source = File(p.join(nodeModules.path, relativePath));
-      final destination = File(p.join(outputDir.path, p.basename(relativePath)));
+      final destination = File(
+        p.join(outputDir.path, p.basename(relativePath)),
+      );
 
       if (!source.existsSync()) {
         stderr.writeln("Missing file: ${source.path}");

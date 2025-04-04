@@ -1,5 +1,4 @@
 class Destination {
-
   String destination;
 
   Destination({required this.destination});
@@ -8,5 +7,4 @@ class Destination {
   String toString() {
     return "Destination(destination: $destination)";
   }
-
 }

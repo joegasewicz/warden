@@ -1,37 +1,32 @@
 import 'dart:io';
 import "package:warden/conf/destination.dart";
+import "package:warden/conf/source_directory.dart";
 import "package:yaml/yaml.dart";
 
 import "package:warden/conf/task.dart";
 import "package:warden/conf/dependency.dart";
 
 class Conf {
-
-  late final String wardenFilePath;
-  late List<Task> tasks = [];
+  final String wardenFilePath;
+  late SourceDirectory sourceDirectory;
   late Destination destination;
   late Dependency dependencies;
+  late List<Task> tasks = [];
 
-  Conf(String wardenFilePath) {
-
+  Conf({required this.wardenFilePath}) {
     File wardenFile = File(wardenFilePath);
     String fileContent = wardenFile.readAsStringSync();
     dynamic yamlMap = loadYaml(fileContent);
+    setSourceDirectory(yamlMap);
     setDestination(yamlMap);
     setDependencies(yamlMap);
     setTasks(yamlMap);
   }
 
-  void setTasks(dynamic yamlMap) {
-   yamlMap['tasks'].forEach((key, value) {
-      Task task = Task(
-          name: key,
-          executable: value["executable"] as String,
-          args: List<String>.from(value["args"]),
-          projectPath: value["project_path"] as String,
-      );
-      tasks.add(task);
-    });
+  void setSourceDirectory(dynamic yamlMap) {
+    sourceDirectory = SourceDirectory(
+      sourceDirectory: yamlMap["source_dir"] as String,
+    );
   }
 
   void setDestination(dynamic yamlMap) {
@@ -41,8 +36,20 @@ class Conf {
   void setDependencies(dynamic yamlMap) {
     final root = yamlMap["dependencies"];
     dependencies = Dependency(
-        source: root["source"] as String,
-        files: List<String>.from(root["files"]),
+      source: root["source"] as String,
+      files: List<String>.from(root["files"]),
     );
+  }
+
+  void setTasks(dynamic yamlMap) {
+    yamlMap['tasks'].forEach((key, value) {
+      Task task = Task(
+        name: key,
+        executable: value["executable"] as String,
+        args: List<String>.from(value["args"]),
+        src: value["src"] as String,
+      );
+      tasks.add(task);
+    });
   }
 }

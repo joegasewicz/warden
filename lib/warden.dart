@@ -2,55 +2,49 @@ import 'dart:io';
 import "package:path/path.dart" as p;
 
 import 'package:warden/asset_mover.dart' as warden;
+import 'package:warden/conf/conf.dart';
 import 'package:warden/processor.dart';
 import 'package:watcher/watcher.dart';
 
 class Warden {
+  Conf config;
+  List<Processor> processors = [];
+
+  Warden({required this.config});
 
   run() async {
-    final watcher = DirectoryWatcher("../../web/public");
+    final watcher = DirectoryWatcher(config.sourceDirectory.sourceDirectory);
 
-    final deps = new warden.AssetMover();
-    // Dart processor
-    final dartExc = "dart";
-    final sassExc = "dart";
-    final dartArgs = [
-      "compile",
-      "js",
-      "main.dart",
-      "-o",
-      "../../static/main.js"
-    ];
-    final sassArgs = [
-      "run",
-      "sass",
-      "index.scss:../../static/index.css",
-    ];
-    final dartWorkingDirectory = "../../web/public/web";
-    final sassWorkingDirectory = "../../web/public/sass";
+    final deps = warden.AssetMover(
+      dependencies: config.dependencies,
+      destination: config.destination,
+    );
     // Sass processor
+    for (var task in config.tasks) {
+      final processor =  Processor(
+          executable: task.executable,
+          arguments: task.args,
+          workingDirectory: task.src,
+      );
 
-    final dartProcessor = new Processor(dartExc, dartArgs, dartWorkingDirectory);
-    final sassProcessor = new Processor(sassExc, sassArgs, sassWorkingDirectory);
+      processors.add(processor);
+    }
 
     // Initiate initial compilations
     deps.init();
-    await dartProcessor.run();
-    await sassProcessor.run();
+    for (var processor in processors) {
+      await processor.run();
+    }
 
     watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
       // Recompile
-      if (!normalized.contains("/web/static/")) {
-        print("Changes deteced in ${event.path}. Recompiling");
-        await dartProcessor.run();
-      }
-      if (!normalized.contains("/web/static/")) {
-        print("Changes detected in ${event.path}. Recompiling...");
-        await sassProcessor.run();
+      for (var processor in processors) {
+        if (!normalized.contains(config.destination.destination)) {
+          print("Changes detected in ${event.path}. Recompiling");
+          await processor.run();
+        }
       }
     });
-
-
   }
 }
