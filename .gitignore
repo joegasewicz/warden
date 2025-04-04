@@ -4,4 +4,6 @@
 */dart_tool/
 .idea
 static
+# This might get created if there are bugs
+*/static
 */node_modules
