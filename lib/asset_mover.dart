@@ -4,7 +4,6 @@ import "package:warden/conf/dependency.dart";
 import "package:warden/conf/destination.dart";
 
 class AssetMover {
-
   final Dependency dependencies;
   final Destination destination;
 

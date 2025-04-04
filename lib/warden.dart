@@ -1,4 +1,3 @@
-import 'dart:io';
 import "package:path/path.dart" as p;
 
 import 'package:warden/asset_mover.dart' as warden;
@@ -21,10 +20,10 @@ class Warden {
     );
     // Sass processor
     for (var task in config.tasks) {
-      final processor =  Processor(
-          executable: task.executable,
-          arguments: task.args,
-          workingDirectory: task.src,
+      final processor = Processor(
+        executable: task.executable,
+        arguments: task.args,
+        workingDirectory: task.src,
       );
 
       processors.add(processor);

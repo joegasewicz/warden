@@ -6,8 +6,8 @@ import 'package:warden/warden.dart';
 void main(List<String> arguments) async {
   printLogo();
 
-  final parser =
-      ArgParser()..addOption("file", abbr: "f", help: "The warden yaml file.");
+  final parser = ArgParser()
+    ..addOption("file", abbr: "f", help: "The warden yaml file.");
 
   // Handle args
   final argResults = parser.parse(arguments);
