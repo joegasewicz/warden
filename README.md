@@ -58,6 +58,7 @@ warden --file=warden.yaml
 ```
 
 ### 🧪 Example Project Structure
+```
 examples/
 ├── bin/
 │   └── main.dart
@@ -71,3 +72,4 @@ examples/
 License
 
 MIT © 2025 joegasewicz
+```
