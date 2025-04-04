@@ -68,8 +68,8 @@ examples/
 │   └── index.scss
 ├── node_modules/
 ├── warden.yaml
+```
 
 License
 
 MIT © 2025 joegasewicz
-```
