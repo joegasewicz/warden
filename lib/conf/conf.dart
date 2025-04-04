@@ -10,7 +10,7 @@ class Conf {
   late final String wardenFilePath;
   late List<Task> tasks = [];
   late Destination destination;
-  late List<Dependency> dependencies;
+  late Dependency dependencies;
 
   Conf(String wardenFilePath) {
 
@@ -18,6 +18,7 @@ class Conf {
     String fileContent = wardenFile.readAsStringSync();
     dynamic yamlMap = loadYaml(fileContent);
     setDestination(yamlMap);
+    setDependencies(yamlMap);
     setTasks(yamlMap);
   }
 
@@ -34,6 +35,14 @@ class Conf {
   }
 
   void setDestination(dynamic yamlMap) {
+    destination = Destination(destination: yamlMap["destination"] as String);
+  }
 
+  void setDependencies(dynamic yamlMap) {
+    final root = yamlMap["dependencies"];
+    dependencies = Dependency(
+        source: root["source"] as String,
+        files: List<String>.from(root["files"]),
+    );
   }
 }
