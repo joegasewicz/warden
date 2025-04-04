@@ -1,8 +1,5 @@
 # Warden
 **Static Builder CLI**
-# Warden
-**Static Builder CLI**
-
 [![pub package](https://img.shields.io/pub/v/warden.svg)](https://pub.dev/packages/warden)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![build](https://img.shields.io/github/actions/workflow/status/joegasewicz/warden/dart.yml?branch=main)](https://github.com/joegasewicz/warden/actions)
