@@ -18,22 +18,31 @@ Docs are [here](https://pub.dev/packages/warden)
 Create a `warden.yaml` in your project root with the following structure:
 
 ```yaml
+# The root directory of your source files
 source_dir: examples
 
+# Where to output built files (JavaScript, CSS, etc.)
 destination: static/
 
+# List of third-party files (JS/CSS) to copy from a source directory
 dependencies:
+  # Path to your local node_modules (or other directory holding third-party files)
   source: examples/node_modules
   files:
+    # List of files to copy into the static/ destination
     - 'bootstrap/dist/js/bootstrap.min.js'
     - 'bootstrap/dist/css/bootstrap.min.css'
     - 'popper.js/dist/umd/popper.min.js'
 
+# List of build tasks to run (Dart compile, Sass compile, etc.)
 tasks:
+  # First task: compile Dart to JavaScript
   frontend:
-    executable: dart
-    args: ["compile", "js", "bin/main.dart", "-o", "../static/main.js"]
-    src: examples
+    executable: dart                  # Command to run
+    args: ["compile", "js", "bin/main.dart", "-o", "../static/main.js"]  # Arguments to compile Dart
+    src: examples                     # Working directory for this task
+
+  # Second task: compile Sass to CSS
   styles:
     executable: dart
     args: ["run", "sass", "sass/index.scss:../static/index.css"]
