@@ -1,3 +1,5 @@
+source_dir: examples
+
 destination: static/
 
 dependencies:
@@ -10,9 +12,9 @@ dependencies:
 tasks:
   frontend:
     executable: dart
-    args: ["compile", "js", "main.dart", "-o", "../static/main.js"]
-    project_path: ../examples
+    args: ["compile", "js", "bin/main.dart", "-o", "../static/main.js"]
+    src: examples
   styles:
     executable: dart
-    args: ["run", "sass", "index.scss:../static/index.css"]
-    project_path: ../examples/sass
+    args: ["run", "sass", "sass/index.scss:../static/index.css"]
+    src: examples

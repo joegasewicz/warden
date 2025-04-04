@@ -1,15 +1,14 @@
 class Task {
-
   String name;
   String executable;
   List<String> args;
-  String projectPath;
+  String src;
 
   Task({
     required this.name,
     required this.executable,
     required this.args,
-    required this.projectPath,
+    required this.src,
   });
 
   @override
@@ -18,8 +17,7 @@ class Task {
         "name: $name, "
         "executable: $executable, "
         "args: $args, "
-        "projectPath: $projectPath"
+        "src: $src"
         ")";
-    }
-
+  }
 }

@@ -1,12 +1,14 @@
 name: warden
-description: A sample command-line application.
-version: 1.0.0
-# repository: https://github.com/my_org/my_repo
-
+description: Static Builder CLI
+version: 0.1.0
+repository: https://github.com/joegasewicz/warden
+homepage: https://github.com/joegasewicz/warden
 environment:
   sdk: ^3.7.2
 
-# Add regular dependencies here.
+executables:
+  warden: bin/warden
+
 dependencies:
    path: ^1.8.0
    watcher: ^1.1.1
@@ -17,4 +19,3 @@ dependencies:
 dev_dependencies:
   lints: ^5.0.0
   test: ^1.24.0
-
