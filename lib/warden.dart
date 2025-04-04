@@ -18,7 +18,7 @@ class Warden {
       dependencies: config.dependencies,
       destination: config.destination,
     );
-    // Sass processor
+
     for (var task in config.tasks) {
       final processor = Processor(
         executable: task.executable,
