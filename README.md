@@ -1,7 +1,16 @@
 # Warden
 **Static Builder CLI**
+# Warden
+**Static Builder CLI**
+
+[![pub package](https://img.shields.io/pub/v/warden.svg)](https://pub.dev/packages/warden)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![build](https://img.shields.io/github/actions/workflow/status/joegasewicz/warden/dart.yml?branch=main)](https://github.com/joegasewicz/warden/actions)
+[![Dart](https://img.shields.io/badge/Dart-3.7%2B-blue)](https://dart.dev)
 
 Warden is a lightweight CLI tool to watch and compile Dart and Sass files for frontend projects. It's designed for projects that use server-side rendered HTML but still want custom JS/CSS assets compiled automatically.
+
+Docs are [here](https://pub.dev/packages/warden)
 
 ### Features
 - 🪄 Watches your Dart and Sass files and recompiles on change  
