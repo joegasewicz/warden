@@ -1,0 +1,20 @@
+version: 1
+
+destination: static/
+
+dependencies:
+  source: examples/node_modules
+  files:
+    - 'bootstrap/dist/js/bootstrap.min.js'
+    - 'bootstrap/dist/css/bootstrap.min.css'
+    - 'popper.js/dist/umd/popper.min.js'
+
+tasks:
+  frontend:
+    executable: dart
+    args: ["compile", "js", "main.dart", "-o", "../static/main.js"]
+    project_path: ../examples
+  styles:
+    executable: dart
+    args: ["run", "sass", "index.scss:../static/index.css"]
+    project_path: ../examples/sass
