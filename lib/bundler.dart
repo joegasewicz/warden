@@ -85,7 +85,11 @@ class Bundler {
         stderr.writeln(redPen("[WARDEN]: Missing file for bundling: ${source.path}"));
         continue;
       }
-
+      // Make sure only JS files are included in the bundle
+      if (!source.path.endsWith(".js")) {
+         print("[WARDEN]: Skipping bundling for none .js file - ${source.path}");
+        continue;
+      }
       buffer.writeln("// ---------------------------------------------------- //");
       buffer.writeln("// ----------------- ${p.basename(relativePath)} ------------------ //");
       buffer.writeln("// ---------------------------------------------------- //");
