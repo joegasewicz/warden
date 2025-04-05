@@ -54,11 +54,17 @@ class Conf {
 
   void setTasks(dynamic yamlMap) {
     yamlMap['tasks'].forEach((key, value) {
+      var warnings = true;
+      if (value["warnings"] != null) {
+        warnings = value["warnings"] as bool;
+      }
+
       Task task = Task(
         name: key,
         executable: value["executable"] as String,
         args: List<String>.from(value["args"]),
         src: value["src"] as String,
+        warnings: warnings,
       );
       tasks.add(task);
     });
