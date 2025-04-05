@@ -30,8 +30,8 @@ dependencies:
   source: examples/node_modules
   files:
     # List of files to copy into the static/ destination
+	# Note: We only need Bootstrap's JS files as the css file is bundled in with the built css file.  
     - 'bootstrap/dist/js/bootstrap.min.js'
-    - 'bootstrap/dist/css/bootstrap.min.css'
     - 'popper.js/dist/umd/popper.min.js'
 
 # List of build tasks to run (Dart compile, Sass compile, etc.)
@@ -61,7 +61,7 @@ This will:
 	•	Watch all source files and recompile on change
 
 
-### 📦 Installation (coming soon)
+### 📦 Installation
 
 ```bash
 dart pub global activate warden
