@@ -24,6 +24,7 @@ class Bundler {
   late Directory outputDir;
   late AnsiPen greenPen;
   late AnsiPen redPen;
+  late AnsiPen bluePen;
 
   Bundler({
     required this.dependencies,
@@ -33,6 +34,7 @@ class Bundler {
     outputDir = Directory(destination.destination);
     greenPen = AnsiPen()..green();
     redPen = AnsiPen()..red(bold: true);
+    bluePen = AnsiPen()..blue();
   }
 
   /// Merges and writes JavaScript files into a single `bundle.js` file.
@@ -85,7 +87,11 @@ class Bundler {
         stderr.writeln(redPen("[WARDEN]: Missing file for bundling: ${source.path}"));
         continue;
       }
-
+      // Make sure only JS files are included in the bundle
+      if (!source.path.endsWith(".js")) {
+         print(bluePen("[WARDEN]: Skipping bundling for none .js file - ${source.path}"));
+        continue;
+      }
       buffer.writeln("// ---------------------------------------------------- //");
       buffer.writeln("// ----------------- ${p.basename(relativePath)} ------------------ //");
       buffer.writeln("// ---------------------------------------------------- //");

@@ -4,11 +4,12 @@ destination: static/
 
 dependencies:
   source: example/node_modules
-#  bundle: true
-#  main: static/main.js
+  bundle: true
+  main: static/main.js
   files:
     - "poppyjs/dist/Poppy.min.js"
     - "bootstrap/dist/js/bootstrap.min.js"
+    -  "bootstrap/scss/bootstrap.scss"
 
 tasks:
   frontend:
