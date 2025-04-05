@@ -3,16 +3,17 @@ source_dir: example
 destination: static/
 
 dependencies:
-  source: examples/node_modules
+  source: example/node_modules
+#  bundle: true
+#  main: static/main.js
   files:
-    - 'bootstrap/dist/js/bootstrap.min.js'
-    - 'bootstrap/dist/css/bootstrap.min.css'
-    - 'popper.js/dist/umd/popper.min.js'
+    - "poppyjs/dist/Poppy.min.js"
+    - "bootstrap/dist/js/bootstrap.min.js"
 
 tasks:
   frontend:
     executable: dart
-    args: ["compile", "js", "bin/main.dart", "-o", "../static/main.js"]
+    args: ["compile", "js", "bin/main.dart", "-O4", "-o", "../static/main.js"]
     src: example
   styles:
     executable: dart

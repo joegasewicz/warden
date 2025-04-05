@@ -35,8 +35,19 @@ class Conf {
 
   void setDependencies(dynamic yamlMap) {
     final root = yamlMap["dependencies"];
+    var bundle = false;
+    var mainFile = "";
+
+    if (root["bundle"] != null) {
+      bundle = root["bundle"] as bool;
+    }
+    if (root["main"] != null) {
+      mainFile = root["main"] as String;
+    }
     dependencies = Dependency(
       source: root["source"] as String,
+      bundle: bundle,
+      main: mainFile,
       files: List<String>.from(root["files"]),
     );
   }

@@ -1,8 +1,23 @@
-import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
+import 'package:warden/cli.dart';
 import 'package:warden/conf/conf.dart';
 import 'package:warden/warden.dart';
 
+/// Entry point for the Warden CLI.
+///
+/// This function:
+/// - Prints the ASCII logo
+/// - Parses command-line arguments
+/// - Loads the configuration from the specified or default `warden.yaml`
+/// - Instantiates and starts the [Warden] build system
+///
+/// ### CLI Options:
+/// - `-f`, `--file`: Path to the `warden.yaml` config file. Default is `warden.yaml` in the current directory.
+///
+/// Example usage:
+/// ```bash
+/// dart run warden --file=example/warden.yaml
+/// ```
 void main(List<String> arguments) async {
   printLogo();
 
@@ -15,27 +30,9 @@ void main(List<String> arguments) async {
   if (argResults.wasParsed("file")) {
     wardenFile = argResults["file"];
   }
-  print("file = $wardenFile");
 
   final conf = Conf(wardenFilePath: wardenFile);
 
   final warden = Warden(config: conf);
   warden.run();
-}
-
-void printLogo() {
-  AnsiPen cyan = AnsiPen()..cyan();
-  AnsiPen bold = AnsiPen()..white(bold: true);
-  print(
-    cyan(r"""
- ___       __   ________  ________  ________  _______   ________      
-|\  \     |\  \|\   __  \|\   __  \|\   ___ \|\  ___ \ |\   ___  \    
-\ \  \    \ \  \ \  \|\  \ \  \|\  \ \  \_|\ \ \   __/|\ \  \\ \  \   
- \ \  \  __\ \  \ \   __  \ \   _  _\ \  \ \\ \ \  \_|/_\ \  \\ \  \  
-  \ \  \|\__\_\  \ \  \ \  \ \  \\  \\ \  \_\\ \ \  \_|\ \ \  \\ \  \ 
-   \ \____________\ \__\ \__\ \__\\ _\\ \_______\ \_______\ \__\\ \__\
-    \|____________|\|__|\|__|\|__|\|__|\|_______|\|_______|\|__| \|__|    
-    """),
-  );
-  print(bold("                   Static Builder CLI\n"));
 }
