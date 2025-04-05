@@ -4,12 +4,11 @@ class Dependency {
   String main;
   List<String> files;
 
-  Dependency({
-    required this.source,
-    required this.bundle,
-    required this.main,
-    required this.files
-  });
+  Dependency(
+      {required this.source,
+      required this.bundle,
+      required this.main,
+      required this.files});
 
   @override
   String toString() {

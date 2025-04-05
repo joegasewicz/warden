@@ -17,7 +17,6 @@ import "package:warden/conf/destination.dart";
 /// - Output a single bundled `bundle.js` into the `destination` directory
 /// - Log errors for any missing files
 class Bundler {
-
   final Dependency dependencies;
   final Destination destination;
   late Directory nodeModules;
@@ -50,7 +49,8 @@ class Bundler {
     buffer.writeln("/*");
     buffer.writeln(drawLogo());
     buffer.writeln("*/");
-    buffer.writeln("// ---------------------  WARDEN >> START -------------------- //");
+    buffer.writeln(
+        "// ---------------------  WARDEN >> START -------------------- //");
     buffer.writeln("");
     // Bundle all dependency files
     _bundleFiles(buffer);
@@ -58,7 +58,8 @@ class Bundler {
     if (dependencies.main != "") {
       _bundleMainFile(buffer);
     }
-    buffer.writeln("// ----------------------  WARDEN << END -------------------- //");
+    buffer.writeln(
+        "// ----------------------  WARDEN << END -------------------- //");
     final bundleFile = File(p.join(bundlePath));
     bundleFile.writeAsStringSync(buffer.toString());
     print(greenPen("[WARDEN]: Bundled JS files into: $bundlePath"));
@@ -66,35 +67,44 @@ class Bundler {
 
   void _bundleMainFile(StringBuffer buffer) {
     final mainSrc = File(dependencies.main);
-      if (!mainSrc.existsSync()) {
-        stderr.writeln(redPen("[Warden]: Missing file for bundling: ${mainSrc.path}"));
-      } else {
-        buffer.writeln("// ---------------------------------------------------- //");
-        buffer.writeln("// ----------------- ${p.basename(mainSrc.path)} ------------------ //");
-        buffer.writeln("// -----------------------------------------------------//");
-        final mainContent = mainSrc.readAsStringSync();
-        buffer.writeln(mainContent);
-        // Delete `main` file
-        mainSrc.delete();
-      }
+    if (!mainSrc.existsSync()) {
+      stderr.writeln(
+          redPen("[Warden]: Missing file for bundling: ${mainSrc.path}"));
+    } else {
+      buffer.writeln(
+          "// ---------------------------------------------------- //");
+      buffer.writeln(
+          "// ----------------- ${p.basename(mainSrc.path)} ------------------ //");
+      buffer.writeln(
+          "// -----------------------------------------------------//");
+      final mainContent = mainSrc.readAsStringSync();
+      buffer.writeln(mainContent);
+      // Delete `main` file
+      mainSrc.delete();
+    }
   }
 
   void _bundleFiles(StringBuffer buffer) {
-   for (final relativePath in dependencies.files) {
+    for (final relativePath in dependencies.files) {
       final source = File(p.join(nodeModules.path, relativePath));
 
       if (!source.existsSync()) {
-        stderr.writeln(redPen("[WARDEN]: Missing file for bundling: ${source.path}"));
+        stderr.writeln(
+            redPen("[WARDEN]: Missing file for bundling: ${source.path}"));
         continue;
       }
       // Make sure only JS files are included in the bundle
       if (!source.path.endsWith(".js")) {
-         print(bluePen("[WARDEN]: Skipping bundling for none .js file - ${source.path}"));
+        print(bluePen(
+            "[WARDEN]: Skipping bundling for none .js file - ${source.path}"));
         continue;
       }
-      buffer.writeln("// ---------------------------------------------------- //");
-      buffer.writeln("// ----------------- ${p.basename(relativePath)} ------------------ //");
-      buffer.writeln("// ---------------------------------------------------- //");
+      buffer.writeln(
+          "// ---------------------------------------------------- //");
+      buffer.writeln(
+          "// ----------------- ${p.basename(relativePath)} ------------------ //");
+      buffer.writeln(
+          "// ---------------------------------------------------- //");
       final content = source.readAsStringSync();
       buffer.writeln(content);
       buffer.writeln("");

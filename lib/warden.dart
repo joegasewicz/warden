@@ -65,7 +65,8 @@ class Warden {
       // Recompile
       for (var processor in processors) {
         if (!normalized.contains(config.destination.destination)) {
-          print(greenPen("[WARDEN]: Changes detected in ${event.path}. Recompiling"));
+          print(greenPen(
+              "[WARDEN]: Changes detected in ${event.path}. Recompiling"));
           await processor.run();
         }
       }
