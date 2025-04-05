@@ -1,4 +1,3 @@
-import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
 import 'package:warden/conf/conf.dart';
