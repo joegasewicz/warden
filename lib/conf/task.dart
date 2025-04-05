@@ -3,12 +3,14 @@ class Task {
   String executable;
   List<String> args;
   String src;
+  bool warnings;
 
   Task({
     required this.name,
     required this.executable,
     required this.args,
     required this.src,
+    required this.warnings,
   });
 
   @override
@@ -17,7 +19,8 @@ class Task {
         "name: $name, "
         "executable: $executable, "
         "args: $args, "
-        "src: $src"
+        "src: $src, "
+        "warnings: $warnings"
         ")";
   }
 }

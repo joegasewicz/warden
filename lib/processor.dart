@@ -23,11 +23,15 @@ class Processor {
   String executable;
   List<String> arguments;
   String workingDirectory;
+  bool warnings;
+  String name;
 
   Processor({
     required this.executable,
     required this.arguments,
     required this.workingDirectory,
+    required this.warnings,
+    required this.name,
   });
 
   /// Executes the configured command and prints stdout and stderr
@@ -50,12 +54,16 @@ class Processor {
     );
 
     if (result.stdout.toString().trim().isNotEmpty) {
-      stdout.writeln(greenPen(result.stdout));
+      stdout.writeln(greenPen("[WARDEN]: ✅[TASK]: ${result.stdout}"));
     }
 
     if (result.stderr.toString().trim().isNotEmpty) {
       if (result.stderr.toString().trim().toLowerCase().contains("warning")) {
-        stderr.writeln(bluePen(result.stderr));
+        if (warnings) {
+          stderr.writeln(bluePen("[WARDEN]: [TASK]: ⚠️${result.stderr}"));
+        } else {
+          print(greenPen("[WARDEN]: ✅[TASK]: Successfully ran task for: $name"));
+        }
       } else {
         stderr.writeln(redPen(result.stderr));
       }

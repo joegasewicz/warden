@@ -43,13 +43,13 @@ class AssetMover {
       );
 
       if (!source.existsSync()) {
-        stderr.writeln(redPen("[WARDEN]: Missing file: ${source.path}"));
+        stderr.writeln(redPen("[WARDEN]: ⚠️Missing file: ${source.path}"));
         continue;
       }
 
       destination.createSync(recursive: true);
       destination.writeAsBytesSync(source.readAsBytesSync());
-      print(greenPen("[WARDEN]: Moved ${source.path} -> ${destination.path}"));
+      print(greenPen("[WARDEN]: ✅Moved ${source.path} -> ${destination.path}"));
     }
   }
 }

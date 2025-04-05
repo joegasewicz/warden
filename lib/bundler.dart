@@ -62,14 +62,14 @@ class Bundler {
         "// ----------------------  WARDEN << END -------------------- //");
     final bundleFile = File(p.join(bundlePath));
     bundleFile.writeAsStringSync(buffer.toString());
-    print(greenPen("[WARDEN]: Bundled JS files into: $bundlePath"));
+    print(greenPen("[WARDEN]: ✅Bundled JS files into: $bundlePath"));
   }
 
   void _bundleMainFile(StringBuffer buffer) {
     final mainSrc = File(dependencies.main);
     if (!mainSrc.existsSync()) {
       stderr.writeln(
-          redPen("[Warden]: Missing file for bundling: ${mainSrc.path}"));
+          redPen("[Warden]: ⛔️Missing file for bundling: ${mainSrc.path}"));
     } else {
       buffer.writeln(
           "// ---------------------------------------------------- //");
@@ -90,13 +90,13 @@ class Bundler {
 
       if (!source.existsSync()) {
         stderr.writeln(
-            redPen("[WARDEN]: Missing file for bundling: ${source.path}"));
+            redPen("[WARDEN]: ⛔️Missing file for bundling: ${source.path}"));
         continue;
       }
       // Make sure only JS files are included in the bundle
       if (!source.path.endsWith(".js")) {
         print(bluePen(
-            "[WARDEN]: Skipping bundling for none .js file - ${source.path}"));
+            "[WARDEN]: ⚠️Skipping bundling for none .js file - ${source.path}"));
         continue;
       }
       buffer.writeln(

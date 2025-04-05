@@ -4,7 +4,7 @@ void printLogo() {
   AnsiPen greenPen = AnsiPen()..green();
 
   print(drawLogo());
-  print(greenPen("[WARDEN]: Watching..."));
+  print(greenPen("[WARDEN]: 👀Watching..."));
 }
 
 String drawLogo() {

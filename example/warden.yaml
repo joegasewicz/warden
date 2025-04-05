@@ -20,3 +20,4 @@ tasks:
     executable: dart
     args: ["run", "sass", "sass/index.scss:../static/index.css"]
     src: example
+    warnings: false

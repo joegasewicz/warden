@@ -44,6 +44,8 @@ class Warden {
         executable: task.executable,
         arguments: task.args,
         workingDirectory: task.src,
+        warnings: task.warnings,
+        name: task.name,
       );
 
       processors.add(processor);
@@ -66,7 +68,7 @@ class Warden {
       for (var processor in processors) {
         if (!normalized.contains(config.destination.destination)) {
           print(greenPen(
-              "[WARDEN]: Changes detected in ${event.path}. Recompiling"));
+              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
           await processor.run();
         }
       }

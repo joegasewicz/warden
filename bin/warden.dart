@@ -19,13 +19,23 @@ import 'package:warden/warden.dart';
 /// dart run warden --file=example/warden.yaml
 /// ```
 void main(List<String> arguments) async {
-  printLogo();
+
 
   final parser = ArgParser()
-    ..addOption("file", abbr: "f", help: "The warden yaml file.");
+    ..addOption("file", abbr: "f", help: "The warden yaml file.")
+    ..addFlag("version", abbr: "v", help: "Get the latest Warden version.");
 
   // Handle args
   final argResults = parser.parse(arguments);
+
+  // Handle version
+  if (argResults["version"]) {
+    print("v0.3.0");
+    return;
+  }
+
+  printLogo();
+
   String wardenFile = "warden.yaml";
   if (argResults.wasParsed("file")) {
     wardenFile = argResults["file"];

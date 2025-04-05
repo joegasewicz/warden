@@ -44,12 +44,13 @@ tasks:
   frontend:
     executable: dart
     args: ["compile", "js", "bin/main.dart", "-o", "../static/main.js"]
-    src: examples
+    src: examples # Working directory for Dart files
 
   styles:
-    executable: dart
+    executable: dart 
     args: ["run", "sass", "sass/index.scss:../static/index.css"]
-    src: examples
+    src: examples # Working directory for Sass
+    warnings: false # Optional: suppress warnings for this task (default is true)
 ```
 
 ### ▶️ Running
