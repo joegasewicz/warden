@@ -62,7 +62,8 @@ class Processor {
         if (warnings) {
           stderr.writeln(bluePen("[WARDEN]: [TASK]: ⚠️${result.stderr}"));
         } else {
-          print(greenPen("[WARDEN]: ✅[TASK]: Successfully ran task for: $name"));
+          print(
+              greenPen("[WARDEN]: ✅[TASK]: Successfully ran task for: $name"));
         }
       } else {
         stderr.writeln(redPen(result.stderr));
