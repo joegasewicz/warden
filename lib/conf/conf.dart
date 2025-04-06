@@ -1,4 +1,5 @@
 import 'dart:io';
+import "package:warden/conf/assets.dart";
 import "package:warden/conf/destination.dart";
 import "package:warden/conf/source_directory.dart";
 import "package:yaml/yaml.dart";
@@ -12,28 +13,30 @@ class Conf {
   late Destination destination;
   late Dependency dependencies;
   late List<Task> tasks = [];
+  late Asset assets;
 
   Conf({required this.wardenFilePath}) {
     File wardenFile = File(wardenFilePath);
     String fileContent = wardenFile.readAsStringSync();
     dynamic yamlMap = loadYaml(fileContent);
-    setSourceDirectory(yamlMap);
-    setDestination(yamlMap);
-    setDependencies(yamlMap);
-    setTasks(yamlMap);
+    _setSourceDirectory(yamlMap);
+    _setDestination(yamlMap);
+    _setDependencies(yamlMap);
+    _setAssets(yamlMap);
+    _setTasks(yamlMap);
   }
 
-  void setSourceDirectory(dynamic yamlMap) {
+  void _setSourceDirectory(dynamic yamlMap) {
     sourceDirectory = SourceDirectory(
       sourceDirectory: yamlMap["source_dir"] as String,
     );
   }
 
-  void setDestination(dynamic yamlMap) {
+  void _setDestination(dynamic yamlMap) {
     destination = Destination(destination: yamlMap["destination"] as String);
   }
 
-  void setDependencies(dynamic yamlMap) {
+  void _setDependencies(dynamic yamlMap) {
     final root = yamlMap["dependencies"];
     var bundle = false;
     var mainFile = "";
@@ -52,7 +55,7 @@ class Conf {
     );
   }
 
-  void setTasks(dynamic yamlMap) {
+  void _setTasks(dynamic yamlMap) {
     yamlMap['tasks'].forEach((key, value) {
       var warnings = true;
       if (value["warnings"] != null) {
@@ -68,5 +71,21 @@ class Conf {
       );
       tasks.add(task);
     });
+  }
+
+  _setAssets(dynamic yamlMap) {
+    var assetResult = yamlMap["assets"];
+    String source = "";
+    List<String> directories = [];
+    if (assetResult != null && assetResult["source"] != null) {
+      source = assetResult["source"];
+    }
+    if (assetResult != null && assetResult["directories"] != null) {
+      directories = List<String>.from(assetResult["directories"]);
+    }
+    assets = Asset(
+      source: source,
+      directories: directories,
+    );
   }
 }

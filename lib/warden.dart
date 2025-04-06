@@ -33,6 +33,7 @@ class Warden {
     final deps = AssetMover(
       dependencies: config.dependencies,
       destination: config.destination,
+      assets: config.assets,
     );
     final bundler = Bundler(
       dependencies: config.dependencies,
@@ -61,6 +62,9 @@ class Warden {
       deps.moveFilesExclSuffix(".js");
     } else {
       deps.moveAllFiles();
+    }
+    if (config.assets.source != "") {
+      deps.moveAssets();
     }
 
     watcher.events.listen((event) async {
