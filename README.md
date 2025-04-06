@@ -44,7 +44,7 @@ dependencies:
     - 'poppyjs/dist/Poppy.min.js'
     - 'bootstrap/dist/js/bootstrap.min.js'
 
-# (Optional) Copies across assets folders (e.g., .png, .jpg) files to the destination directory
+# (Optional) Copies across assets folders (e.g. containing .png, .jpg) to the destination directory
 assets:
   source: example/assets
   directories: # The directory in source path that you want to copy across to the destination directory
