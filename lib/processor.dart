@@ -54,19 +54,20 @@ class Processor {
     );
 
     if (result.stdout.toString().trim().isNotEmpty) {
-      stdout.writeln(greenPen("[WARDEN]: ✅[TASK]: ${result.stdout}"));
+      stdout.writeln(greenPen("[WARDEN]: ✅[TASK $name]: ${result.stdout}"));
     }
 
     if (result.stderr.toString().trim().isNotEmpty) {
-      if (result.stderr.toString().trim().toLowerCase().contains("warning")) {
+      final containsWarning = result.stderr.toString().trim().toLowerCase().contains("warning");
+      final containsError = result.stderr.toString().trim().toLowerCase().contains("Error");
+      if (containsWarning && !containsError) {
         if (warnings) {
-          stderr.writeln(bluePen("[WARDEN]: [TASK]: ⚠️${result.stderr}"));
+          stderr.writeln(bluePen("[WARDEN]: [TASK $name]: ⚠️${result.stderr}"));
         } else {
-          print(
-              greenPen("[WARDEN]: ✅[TASK]: Successfully ran task for: $name"));
+          print(greenPen("[WARDEN]: ✅[TASK $name]: Successfully ran task for: $name"));
         }
       } else {
-        stderr.writeln(redPen(result.stderr));
+        stderr.writeln(redPen("[WARDEN]: ⛔[TASK $name]: ${result.stderr}"));
       }
     }
   }
