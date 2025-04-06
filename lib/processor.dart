@@ -64,7 +64,7 @@ class Processor {
           result.stderr.toString().trim().toLowerCase().contains("Error");
       if (containsWarning && !containsError) {
         if (warnings) {
-          stderr.writeln(bluePen("[WARDEN]: [TASK $name]: ⚠️${result.stderr}"));
+          stderr.writeln(bluePen("[WARDEN]: ⚠️[TASK $name]: ${result.stderr}"));
         } else {
           print(greenPen(
               "[WARDEN]: ✅[TASK $name]: Successfully ran task for: $name"));

@@ -18,6 +18,8 @@ class AssetMover {
   final Destination destination;
   late Directory nodeModules;
   late Directory outputDir;
+  late AnsiPen greenPen;
+  late AnsiPen redPen;
 
   AssetMover({
     required this.dependencies,
@@ -25,6 +27,8 @@ class AssetMover {
   }) {
     nodeModules = Directory(dependencies.source);
     outputDir = Directory(destination.destination);
+    greenPen = AnsiPen()..green();
+    redPen = AnsiPen()..red(bold: true);
   }
 
   /// Copies each file defined in `dependencies.files` from the `node_modules` directory
@@ -32,11 +36,23 @@ class AssetMover {
   ///
   /// If a file doesn't exist, Warden will print a warning in red.
   /// Successfully moved files will be logged in green.
-  void moveFiles() {
-    final greenPen = AnsiPen()..green();
-    final redPen = AnsiPen()..red(bold: true);
+  void moveAllFiles() {
+    _move(dependencies.files);
+  }
 
-    for (final relativePath in dependencies.files) {
+  void moveFilesExclSuffix(String suffix) {
+    List<String> nonJSFiles = [];
+    for (String file in dependencies.files) {
+      if (file.endsWith(suffix)) {
+        continue;
+      }
+      nonJSFiles.add(file);
+    }
+    _move(nonJSFiles);
+  }
+
+  void _move(List<String> files) {
+    for (final relativePath in files) {
       final source = File(p.join(nodeModules.path, relativePath));
       final destination = File(
         p.join(outputDir.path, p.basename(relativePath)),

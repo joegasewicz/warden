@@ -58,8 +58,9 @@ class Warden {
     // Moves files AFTER main JS src is built in case it's included in the bundle file.
     if (config.dependencies.bundle) {
       bundler.bundleFiles();
+      deps.moveFilesExclSuffix(".js");
     } else {
-      deps.moveFiles();
+      deps.moveAllFiles();
     }
 
     watcher.events.listen((event) async {
