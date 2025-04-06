@@ -58,13 +58,16 @@ class Processor {
     }
 
     if (result.stderr.toString().trim().isNotEmpty) {
-      final containsWarning = result.stderr.toString().trim().toLowerCase().contains("warning");
-      final containsError = result.stderr.toString().trim().toLowerCase().contains("Error");
+      final containsWarning =
+          result.stderr.toString().trim().toLowerCase().contains("warning");
+      final containsError =
+          result.stderr.toString().trim().toLowerCase().contains("Error");
       if (containsWarning && !containsError) {
         if (warnings) {
           stderr.writeln(bluePen("[WARDEN]: [TASK $name]: ⚠️${result.stderr}"));
         } else {
-          print(greenPen("[WARDEN]: ✅[TASK $name]: Successfully ran task for: $name"));
+          print(greenPen(
+              "[WARDEN]: ✅[TASK $name]: Successfully ran task for: $name"));
         }
       } else {
         stderr.writeln(redPen("[WARDEN]: ⛔[TASK $name]: ${result.stderr}"));
