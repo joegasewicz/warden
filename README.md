@@ -16,6 +16,7 @@ Warden is a lightweight CLI tool to watch and compile Dart and Sass files for fr
 
 - 🔁 Watches your Dart and Sass files and recompiles on change  
 - 📦 Moves specified dependencies (e.g. node_modules assets) into your build output  
+- 🗂️ Moves asset directories (e.g. `assets/img/`) into your destination folder  
 - 🛠️ Bundles your dependency JS files into a single `bundle.js` (optional)  
 - 🧱 Fully configurable via a `warden.yaml` file  
 - 🎯 Supports multiple tasks like compiling Dart to JS and Sass to CSS
@@ -43,6 +44,12 @@ dependencies:
   files:
     - 'poppyjs/dist/Poppy.min.js'
     - 'bootstrap/dist/js/bootstrap.min.js'
+	
+# (Optional) Copies across assets folders (e.g., .png, .jpg) files to the destination directory
+assets:
+  source: example/assets
+  directories: # The directory in source path that you want to copy across to the destination directory
+    - img
 
 # Tasks to run (like build steps)
 tasks:
