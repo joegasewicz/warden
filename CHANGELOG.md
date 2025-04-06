@@ -20,3 +20,6 @@
 
 ## 0.4.0
 - Added move assets #25 by @joegasewicz in https://github.com/joegasewicz/warden/pull/26
+
+## 0.4.1
+- Version fix
