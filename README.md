@@ -70,7 +70,7 @@ This will:
 	•	Compile Sass to CSS
 	•	Watch and recompile on file changes
 
-### 📦 Installation (coming soon)
+### 📦 Installation
 
 ```bash
 dart pub global activate warden
