@@ -14,3 +14,6 @@
 
 ## 0.3.1
 - Fixes errors get swallowed up if warnings token is in stderr. #21 by @joegasewicz in https://github.com/joegasewicz/warden/pull/22
+
+## 0.3.2
+- Fixes move all none bundled files #23 by @joegasewicz in https://github.com/joegasewicz/warden/pull/24
