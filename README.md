@@ -43,7 +43,6 @@ dependencies:
   files:
     - 'poppyjs/dist/Poppy.min.js'
     - 'bootstrap/dist/js/bootstrap.min.js'
-
 # Tasks to run (like build steps)
 tasks:
   frontend:
