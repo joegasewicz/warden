@@ -15,7 +15,8 @@ Warden is a lightweight CLI tool to watch and compile Dart and Sass files for fr
 ## ✨ Features
 
 - 🔁 Watches your Dart and Sass files and recompiles on change  
-- 📦 Moves specified dependencies (e.g. node_modules assets) into your build output  
+- 📦 Moves specified dependencies (e.g. node_modules assets) into your build output 
+- 🗂️ Moves specified asset directories (e.g. `assets/img/`) into your public folder 
 - 🛠️ Bundles your dependency JS files into a single `bundle.js` (optional)  
 - 🧱 Fully configurable via a `warden.yaml` file  
 - 🎯 Supports multiple tasks like compiling Dart to JS and Sass to CSS
