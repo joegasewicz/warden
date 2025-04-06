@@ -17,3 +17,6 @@
 
 ## 0.3.2
 - Fixes move all none bundled files #23 by @joegasewicz in https://github.com/joegasewicz/warden/pull/24
+
+## 0.4.0
+- Added move assets #25 by @joegasewicz in https://github.com/joegasewicz/warden/pull/26
