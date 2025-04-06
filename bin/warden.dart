@@ -28,7 +28,7 @@ void main(List<String> arguments) async {
 
   // Handle version
   if (argResults["version"]) {
-    print("v0.3.0");
+    print("v0.4.1");
     return;
   }
 
