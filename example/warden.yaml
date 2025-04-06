@@ -11,6 +11,11 @@ dependencies:
     - "bootstrap/dist/js/bootstrap.min.js"
     -  "bootstrap/scss/bootstrap.scss"
 
+assets:
+  source: example/assets
+  directories:
+    - img
+
 tasks:
   frontend:
     executable: dart

@@ -1,6 +1,7 @@
 import "dart:io";
 import "package:ansicolor/ansicolor.dart";
 import "package:path/path.dart" as p;
+import "package:warden/conf/assets.dart";
 import "package:warden/conf/dependency.dart";
 import "package:warden/conf/destination.dart";
 
@@ -16,6 +17,7 @@ import "package:warden/conf/destination.dart";
 class AssetMover {
   final Dependency dependencies;
   final Destination destination;
+  final Asset assets;
   late Directory nodeModules;
   late Directory outputDir;
   late AnsiPen greenPen;
@@ -24,6 +26,7 @@ class AssetMover {
   AssetMover({
     required this.dependencies,
     required this.destination,
+    required this.assets,
   }) {
     nodeModules = Directory(dependencies.source);
     outputDir = Directory(destination.destination);
@@ -49,6 +52,27 @@ class AssetMover {
       nonJSFiles.add(file);
     }
     _move(nonJSFiles);
+  }
+
+  void moveAssets() {
+    for (final dirName in assets.directories) {
+      final sourceDir = Directory(p.join(assets.source, dirName));
+      final destDir = Directory(p.join(outputDir.path, dirName));
+
+      if (!sourceDir.existsSync()) {
+        stderr.writeln(redPen("[WARDEN]: ⚠️ Missing asset directory ${sourceDir.path}"));
+        continue;
+      }
+      for (final entity in sourceDir.listSync(recursive: true)) {
+        if (entity is File) {
+          final relative = p.relative(entity.path, from: sourceDir.path);
+          final targetFile = File(p.join(destDir.path, relative));
+          targetFile.createSync(recursive: true);
+          targetFile.writeAsBytesSync(entity.readAsBytesSync());
+          print(greenPen("[WARDEN]: ✅ Copied asset: ${entity.path} -> ${targetFile.path}"));
+        }
+      }
+    }
   }
 
   void _move(List<String> files) {
