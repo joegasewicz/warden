@@ -103,7 +103,7 @@ examples/
 ```
 
 ### Contributions
-Please Open an issue or reply to an existing issue requesting that you would like
+Please open an issue or reply to an existing issue requesting that you would like
 to work on it. PRs that do not fix a known bug or add new features will be closed.
 
 License
