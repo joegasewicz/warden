@@ -1,6 +1,5 @@
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
-import 'package:warden/conf/conf.dart';
 import 'package:warden/warden.dart';
 
 /// Entry point for the Warden CLI.
@@ -39,8 +38,6 @@ void main(List<String> arguments) async {
     wardenFile = argResults["file"];
   }
 
-  final conf = Conf(wardenFilePath: wardenFile);
-
-  final warden = Warden(config: conf);
+  final warden = Warden(wardenFilePath: wardenFile);
   warden.run();
 }
