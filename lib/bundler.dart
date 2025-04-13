@@ -4,10 +4,7 @@ import "package:path/path.dart" as p;
 import "package:warden/cli.dart";
 import "package:warden/destination.dart";
 
-
-
 abstract class BaseBundler {
-
   late AnsiPen greenPen;
   late AnsiPen redPen;
   late AnsiPen bluePen;
@@ -27,7 +24,6 @@ abstract class BaseBundler {
   }
 
   void bundleFiles(List<String> files, String dependencySrc, StringBuffer buff);
-
 
   void start() {
     buffer.writeln("/*");
@@ -68,7 +64,6 @@ abstract class BaseBundler {
       mainSrc.delete();
     }
   }
-
 }
 
 /// The `Bundler` class is responsible for managing and bundling JavaScript assets.
@@ -83,14 +78,12 @@ abstract class BaseBundler {
 /// - Output a single bundled `bundle.js` into the `destination` directory
 /// - Log errors for any missing files
 class Bundler extends BaseBundler {
-
   late Directory nodeModules;
 
   Bundler(
-      super.destination, {
-      required super.dependencyMainFile,
+    super.destination, {
+    required super.dependencyMainFile,
   }) {
-
     greenPen = AnsiPen()..green();
     redPen = AnsiPen()..red(bold: true);
     bluePen = AnsiPen()..blue();
@@ -104,14 +97,14 @@ class Bundler extends BaseBundler {
   ///
   /// A terminal success message is printed. Missing files are logged as warnings.
   @override
-  void bundleFiles(List<String> files, String dependencySrc, StringBuffer buff) {
+  void bundleFiles(
+      List<String> files, String dependencySrc, StringBuffer buff) {
     // Bundle all dependency files
     _bundleFiles(buff, files, dependencySrc);
   }
 
-
-
-  void _bundleFiles(StringBuffer buffer, List<String> files, String dependencySrc) {
+  void _bundleFiles(
+      StringBuffer buffer, List<String> files, String dependencySrc) {
     final nodeModules = Directory(dependencySrc);
     for (final relativePath in files) {
       final source = File(p.join(nodeModules.path, relativePath));

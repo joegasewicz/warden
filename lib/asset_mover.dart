@@ -39,7 +39,8 @@ class AssetMover {
     _move(files, dependencySrc);
   }
 
-  void moveFilesExclSuffix(String suffix, List<String> files, String dependencySrc) {
+  void moveFilesExclSuffix(
+      String suffix, List<String> files, String dependencySrc) {
     List<String> nonJSFiles = [];
     for (String file in files) {
       if (file.endsWith(suffix)) {
@@ -56,7 +57,8 @@ class AssetMover {
       final destDir = Directory(p.join(outputDir.path, dirName));
 
       if (!sourceDir.existsSync()) {
-        stderr.writeln(redPen("[WARDEN]: ⚠️Missing asset directory ${sourceDir.path}"));
+        stderr.writeln(
+            redPen("[WARDEN]: ⚠️Missing asset directory ${sourceDir.path}"));
         continue;
       }
       for (final entity in sourceDir.listSync(recursive: true)) {
@@ -65,7 +67,8 @@ class AssetMover {
           final targetFile = File(p.join(destDir.path, relative));
           targetFile.createSync(recursive: true);
           targetFile.writeAsBytesSync(entity.readAsBytesSync());
-          print(greenPen("[WARDEN]: ✅Copied asset: ${entity.path} -> ${targetFile.path}"));
+          print(greenPen(
+              "[WARDEN]: ✅Copied asset: ${entity.path} -> ${targetFile.path}"));
         }
       }
     }

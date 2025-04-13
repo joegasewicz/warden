@@ -40,5 +40,4 @@ class Dependency {
         "files: $files"
         ")";
   }
-
 }

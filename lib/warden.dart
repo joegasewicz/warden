@@ -72,6 +72,7 @@ class Warden {
     for (var processor in processors) {
       await processor.run();
     }
+    // Initiate the String buffer
     bundler.start();
     // Moves files AFTER main JS src is built in case it's included in the bundle file.
     for (var dependency in dependencies) {
@@ -86,6 +87,7 @@ class Warden {
         dependency.moveAssets();
       }
     }
+    // Bundle the main file
     bundler.end();
 
     watcher.events.listen((event) async {
@@ -119,11 +121,11 @@ class Warden {
 
   void _setDependencies(dynamic yamlMap) {
     final _dependencies = yamlMap["dependencies"];
-      for (var dependency in _dependencies) {
-        if (dependency is YamlMap) {
-          _setDependency(Map<String, dynamic>.from(dependency));
-        }
+    for (var dependency in _dependencies) {
+      if (dependency is YamlMap) {
+        _setDependency(Map<String, dynamic>.from(dependency));
       }
+    }
   }
 
   void _setDependency(Map<String, dynamic> dependency) {
