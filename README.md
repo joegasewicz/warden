@@ -60,7 +60,7 @@ assets:
   directories: # The directory in source path that you want to copy across to the destination directory
     - img
 
-# Tasks to run (like build steps)
+# Tasks to run
 tasks:
   frontend:
     executable: dart
