@@ -26,3 +26,6 @@
 
 ## 0.5.0
 - Multiple dependencies #29 by @joegasewicz in https://github.com/joegasewicz/warden/pull/30
+
+## 0.5.1
+- Version fix
