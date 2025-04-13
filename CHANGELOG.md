@@ -25,4 +25,4 @@
 - Version fix
 
 ## 0.5.0
-- Multiple dependencies by @joegasewicz in https://github.com/joegasewicz/warden/issues/29
+- Multiple dependencies #29 by @joegasewicz in https://github.com/joegasewicz/warden/pull/30
