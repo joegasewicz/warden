@@ -38,7 +38,7 @@ source_dir: examples
 # Where to output built files (JavaScript, CSS, etc.)
 destination: static/
 
-main_file: static/main.js # Dart-built JS to append to the bundle
+main_file: static/main.js # Main Dart-built JS file
 
 # Dependency handling (e.g. node_modules)
 dependencies:
