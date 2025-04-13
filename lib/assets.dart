@@ -1,5 +1,4 @@
 class Asset {
-
   String source;
   List<String> directories;
 

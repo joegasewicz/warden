@@ -23,3 +23,6 @@
 
 ## 0.4.1
 - Version fix
+
+## 0.5.0
+- Multiple dependencies by @joegasewicz in https://github.com/joegasewicz/warden/issues/29

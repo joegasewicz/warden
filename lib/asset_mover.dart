@@ -1,9 +1,8 @@
 import "dart:io";
 import "package:ansicolor/ansicolor.dart";
 import "package:path/path.dart" as p;
-import "package:warden/conf/assets.dart";
-import "package:warden/conf/dependency.dart";
-import "package:warden/conf/destination.dart";
+import "package:warden/assets.dart";
+import "package:warden/destination.dart";
 
 /// The `AssetMover` class is responsible for copying third-party frontend assets
 /// (like JavaScript or CSS files) from a `node_modules` source directory to a public
@@ -15,7 +14,6 @@ import "package:warden/conf/destination.dart";
 ///
 /// Any missing files will be logged to the terminal.
 class AssetMover {
-  final Dependency dependencies;
   final Destination destination;
   final Asset assets;
   late Directory nodeModules;
@@ -24,11 +22,9 @@ class AssetMover {
   late AnsiPen redPen;
 
   AssetMover({
-    required this.dependencies,
     required this.destination,
     required this.assets,
   }) {
-    nodeModules = Directory(dependencies.source);
     outputDir = Directory(destination.destination);
     greenPen = AnsiPen()..green();
     redPen = AnsiPen()..red(bold: true);
@@ -39,19 +35,20 @@ class AssetMover {
   ///
   /// If a file doesn't exist, Warden will print a warning in red.
   /// Successfully moved files will be logged in green.
-  void moveAllFiles() {
-    _move(dependencies.files);
+  void moveAllFiles(List<String> files, String dependencySrc) {
+    _move(files, dependencySrc);
   }
 
-  void moveFilesExclSuffix(String suffix) {
+  void moveFilesExclSuffix(
+      String suffix, List<String> files, String dependencySrc) {
     List<String> nonJSFiles = [];
-    for (String file in dependencies.files) {
+    for (String file in files) {
       if (file.endsWith(suffix)) {
         continue;
       }
       nonJSFiles.add(file);
     }
-    _move(nonJSFiles);
+    _move(nonJSFiles, dependencySrc);
   }
 
   void moveAssets() {
@@ -60,7 +57,8 @@ class AssetMover {
       final destDir = Directory(p.join(outputDir.path, dirName));
 
       if (!sourceDir.existsSync()) {
-        stderr.writeln(redPen("[WARDEN]: ⚠️Missing asset directory ${sourceDir.path}"));
+        stderr.writeln(
+            redPen("[WARDEN]: ⚠️Missing asset directory ${sourceDir.path}"));
         continue;
       }
       for (final entity in sourceDir.listSync(recursive: true)) {
@@ -69,15 +67,16 @@ class AssetMover {
           final targetFile = File(p.join(destDir.path, relative));
           targetFile.createSync(recursive: true);
           targetFile.writeAsBytesSync(entity.readAsBytesSync());
-          print(greenPen("[WARDEN]: ✅Copied asset: ${entity.path} -> ${targetFile.path}"));
+          print(greenPen(
+              "[WARDEN]: ✅Copied asset: ${entity.path} -> ${targetFile.path}"));
         }
       }
     }
   }
 
-  void _move(List<String> files) {
+  void _move(List<String> files, String dependencySrc) {
     for (final relativePath in files) {
-      final source = File(p.join(nodeModules.path, relativePath));
+      final source = File(p.join(Directory(dependencySrc).path, relativePath));
       final destination = File(
         p.join(outputDir.path, p.basename(relativePath)),
       );

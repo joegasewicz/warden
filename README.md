@@ -38,14 +38,21 @@ source_dir: examples
 # Where to output built files (JavaScript, CSS, etc.)
 destination: static/
 
+main_file: static/main.js # Dart-built JS to append to the bundle
+
 # Dependency handling (e.g. node_modules)
 dependencies:
-  source: examples/node_modules
-  bundle: true                      # (Optional) Bundle all files into a single bundle.js
-  main: static/main.js              # (Optional) Dart-built JS to append to the bundle
-  files:
-    - 'poppyjs/dist/Poppy.min.js'
-    - 'bootstrap/dist/js/bootstrap.min.js'
+  - source: example/node_modules
+    bundle: true
+    files:
+      - "poppyjs/dist/Poppy.min.js"
+      - "bootstrap/dist/js/bootstrap.min.js"
+      - "bootstrap/scss/bootstrap.scss"
+  - source: example/another
+    bundle: true
+    files:
+      - "lib1/dep1.js"
+      - "lib2/dep2.js"
 
 # (Optional) Copies across assets folders (e.g. containing .png, .jpg) to the destination directory
 assets:
