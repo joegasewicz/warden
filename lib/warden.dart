@@ -80,10 +80,10 @@ class Warden {
       final futures = <Future>[];
       // Recompile
       for (var processor in processors) {
-          if (!normalized.contains(destination.destination)) {
-            print(greenPen(
-                "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
-            futures.add(processor.run());
+        if (!normalized.contains(destination.destination)) {
+          print(greenPen(
+              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
+          futures.add(processor.run());
         }
       }
       // Wait for all processes to run & then re bundle file

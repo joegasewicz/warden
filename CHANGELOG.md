@@ -29,3 +29,6 @@
 
 ## 0.5.1
 - Version fix
+
+## 0.5.2
+- 🪲Bug fix for dart watch not waiting for tasks to complete before re-bundling.

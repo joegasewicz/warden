@@ -26,7 +26,7 @@ abstract class BaseBundler {
   }
 
   void bundleFiles(List<String> files, String dependencySrc, StringBuffer buff);
-  
+
   void destroyBundleFile() {
     buffer.clear();
     if (bundleFile != null && bundleFile.existsSync()) {
