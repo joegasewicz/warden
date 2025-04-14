@@ -72,6 +72,28 @@ class Warden {
     for (var processor in processors) {
       await processor.run();
     }
+    // pre bundle the initial run
+    _bundleAndMoveFiles();
+
+    watcher.events.listen((event) async {
+      final normalized = p.normalize(event.path);
+      final futures = <Future>[];
+      // Recompile
+      for (var processor in processors) {
+          if (!normalized.contains(destination.destination)) {
+            print(greenPen(
+                "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
+            futures.add(processor.run());
+        }
+      }
+      // Wait for all processes to run & then re bundle file
+      await Future.wait(futures);
+      _bundleAndMoveFiles();
+    });
+  }
+
+  void _bundleAndMoveFiles() {
+    bundler.destroyBundleFile();
     // Initiate the String buffer
     bundler.start();
     // Moves files AFTER main JS src is built in case it's included in the bundle file.
@@ -89,18 +111,6 @@ class Warden {
     }
     // Bundle the main file
     bundler.end();
-
-    watcher.events.listen((event) async {
-      final normalized = p.normalize(event.path);
-      // Recompile
-      for (var processor in processors) {
-        if (!normalized.contains(destination.destination)) {
-          print(greenPen(
-              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
-          await processor.run();
-        }
-      }
-    });
   }
 
   void _setSourceDirectory(dynamic yamlMap) {

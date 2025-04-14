@@ -13,6 +13,7 @@ abstract class BaseBundler {
   String dependencyMainFile;
   late Directory outputDir;
   final Destination destination;
+  late File bundleFile;
 
   BaseBundler(this.destination, {required this.dependencyMainFile}) {
     greenPen = AnsiPen()..green();
@@ -21,11 +22,21 @@ abstract class BaseBundler {
     buffer = StringBuffer();
     outputDir = Directory(destination.destination);
     bundlePath = p.join(outputDir.path, "bundle.js");
+    bundleFile = File(p.join(bundlePath));
   }
 
   void bundleFiles(List<String> files, String dependencySrc, StringBuffer buff);
+  
+  void destroyBundleFile() {
+    buffer.clear();
+    if (bundleFile != null && bundleFile.existsSync()) {
+      bundleFile.delete();
+    }
+  }
 
   void start() {
+    buffer = StringBuffer();
+    bundleFile = File(p.join(bundlePath));
     buffer.writeln("/*");
     buffer.writeln(drawLogo());
     buffer.writeln("*/");
@@ -41,7 +52,7 @@ abstract class BaseBundler {
     }
     buffer.writeln(
         "// ----------------------  WARDEN << END -------------------- //");
-    final bundleFile = File(p.join(bundlePath));
+
     bundleFile.writeAsStringSync(buffer.toString());
     print(greenPen("[WARDEN]: ✅Bundled JS files into: $bundlePath"));
   }
