@@ -130,8 +130,8 @@ class Warden {
   }
 
   void _setDependencies(dynamic yamlMap) {
-    final _dependencies = yamlMap["dependencies"];
-    for (var dependency in _dependencies) {
+    final dependencyData = yamlMap["dependencies"];
+    for (var dependency in dependencyData) {
       if (dependency is YamlMap) {
         _setDependency(Map<String, dynamic>.from(dependency));
       }

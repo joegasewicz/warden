@@ -29,7 +29,7 @@ abstract class BaseBundler {
 
   void destroyBundleFile() {
     buffer.clear();
-    if (bundleFile != null && bundleFile.existsSync()) {
+    if (bundleFile.existsSync()) {
       bundleFile.delete();
     }
   }
