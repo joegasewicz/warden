@@ -1,10 +1,18 @@
+import 'dart:ffi';
+
 import 'package:ansicolor/ansicolor.dart';
 
-void printLogo() {
+void printLogo(bool isWatching) {
   AnsiPen greenPen = AnsiPen()..green();
 
   print(drawLogo());
-  print(greenPen("[WARDEN]: 👀Watching..."));
+
+  if (isWatching) {
+    print(greenPen("[WARDEN]: 👀Watching..."));
+  } else {
+    print(greenPen("[WARDEN]: 🛠️ Building..."));
+  }
+
 }
 
 String drawLogo() {

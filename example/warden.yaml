@@ -9,8 +9,8 @@ dependencies:
     bundle: true
     files:
       - "poppyjs/dist/Poppy.min.js"
-      - "bootstrap/dist/js/bootstrap.min.js"
-      - "bootstrap/scss/bootstrap.scss"
+#      - "bootstrap/dist/js/bootstrap.min.js"
+#      - "bootstrap/scss/bootstrap.scss"
   - source: example/another
     bundle: true
     files:

@@ -42,6 +42,7 @@ class Warden {
   late Asset assets;
   late BaseBundler bundler;
   late MainFile mainFile;
+  final greenPen = AnsiPen()..green();
 
   Warden({required this.wardenFilePath}) {
     File wardenFile = File(wardenFilePath);
@@ -59,9 +60,16 @@ class Warden {
     bundler = Bundler(destination, dependencyMainFile: mainFile.src);
   }
 
-  run() async {
-    final greenPen = AnsiPen()..green();
-    final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
+  watch() async {
+    _runInitialBuild();
+    _runWatcher();
+  }
+
+  void build() async {
+    _runInitialBuild();
+  }
+
+  void _runInitialBuild() async {
     for (var task in tasks) {
       final processor = Processor(
         executable: task.executable,
@@ -82,7 +90,11 @@ class Warden {
     }
     // pre bundle the initial run
     _bundleAndMoveFiles();
+  }
 
+  void _runWatcher() {
+  // Watcher setup
+    final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
     watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
       final futures = <Future>[];

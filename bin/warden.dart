@@ -20,7 +20,10 @@ import 'package:warden/warden.dart';
 void main(List<String> arguments) async {
   final parser = ArgParser()
     ..addOption("file", abbr: "f", help: "The warden yaml file.")
-    ..addFlag("version", abbr: "v", help: "Get the latest Warden version.");
+    ..addFlag("version", abbr: "v", help: "Get the latest Warden version.")
+    ..addFlag("build", abbr: "b", help: "Build command.")
+    ..addFlag("watch", abbr: "w", help: "Build & watch for file changes.");
+
 
   // Handle args
   final argResults = parser.parse(arguments);
@@ -31,13 +34,29 @@ void main(List<String> arguments) async {
     return;
   }
 
-  printLogo();
+
 
   String wardenFile = "warden.yaml";
   if (argResults.wasParsed("file")) {
     wardenFile = argResults["file"];
   }
 
+  // Create a new instance of Warden
   final warden = Warden(wardenFilePath: wardenFile);
-  warden.run();
+
+  if (argResults["watch"] != null) {
+    printLogo(true);
+    warden.watch();
+    return;
+  }
+
+  if (argResults["build"] != null) {
+    printLogo(false);
+    warden.build();
+    return;
+  }
+
+  // Print out usage if no flags are set
+  print(parser.usage);
+
 }
