@@ -2,17 +2,13 @@ import 'dart:ffi';
 
 import 'package:ansicolor/ansicolor.dart';
 
-void printLogo(bool isWatching) {
-  AnsiPen greenPen = AnsiPen()..green();
+enum CompileType {
+  watch,
+  build,
+}
 
+void printLogo() {
   print(drawLogo());
-
-  if (isWatching) {
-    print(greenPen("[WARDEN]: 👀Watching..."));
-  } else {
-    print(greenPen("[WARDEN]: 🛠️ Building..."));
-  }
-
 }
 
 String drawLogo() {

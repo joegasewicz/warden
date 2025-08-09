@@ -42,6 +42,7 @@ class Warden {
   late Asset assets;
   late BaseBundler bundler;
   late MainFile mainFile;
+
   final greenPen = AnsiPen()..green();
 
   Warden({required this.wardenFilePath}) {
@@ -56,20 +57,22 @@ class Warden {
     _setDependencies(yamlMap);
     _setTasks(yamlMap);
     _setEnvironment(yamlMap);
-    // bundler = Bundler(destination.destination, dependencyMainFile: mainFile.src);
     bundler = Bundler(destination, dependencyMainFile: mainFile.src);
   }
 
   watch() async {
-    _runInitialBuild();
-    _runWatcher();
+    await _runInitialBuild();
+    final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
+    _runWatcher(watcher);
   }
 
-  void build() async {
-    _runInitialBuild();
+  build() async {
+    await _runInitialBuild();
   }
 
-  void _runInitialBuild() async {
+  _runInitialBuild() async {
+
+
     for (var task in tasks) {
       final processor = Processor(
         executable: task.executable,
@@ -92,9 +95,48 @@ class Warden {
     _bundleAndMoveFiles();
   }
 
-  void _runWatcher() {
-  // Watcher setup
+  _runWatcher(Watcher watcher) {
+     watcher.events.listen((event) async {
+      final normalized = p.normalize(event.path);
+      final futures = <Future>[];
+      // Recompile
+      for (var processor in processors) {
+        if (!normalized.contains(destination.destination)) {
+          print(greenPen(
+              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
+          futures.add(processor.run());
+        }
+      }
+      // Wait for all processes to run & then re bundle file
+      await Future.wait(futures);
+      _bundleAndMoveFiles();
+    });
+  }
+
+  run() async {
+    final greenPen = AnsiPen()..green();
     final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
+    for (var task in tasks) {
+      final processor = Processor(
+        executable: task.executable,
+        arguments: task.args,
+        workingDirectory: task.src,
+        warnings: task.warnings,
+        name: task.name,
+        environment: environment,
+        mode: mode,
+      );
+
+      processors.add(processor);
+    }
+
+    // Initiate initial compilations
+    for (var processor in processors) {
+      await processor.run();
+    }
+    // pre bundle the initial run
+    _bundleAndMoveFiles();
+
     watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
       final futures = <Future>[];
@@ -138,7 +180,7 @@ class Warden {
       sourceDirectory: yamlMap["source_dir"] as String,
     );
   }
-  
+
   void _setMode(dynamic yamlMap) {
       mode = Mode(mode: yamlMap["mode"] as String?);
   }

@@ -1,3 +1,4 @@
+import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
 import 'package:warden/warden.dart';
@@ -18,6 +19,7 @@ import 'package:warden/warden.dart';
 /// dart run warden --file=example/warden.yaml
 /// ```
 void main(List<String> arguments) async {
+  AnsiPen greenPen = AnsiPen()..green();
   final parser = ArgParser()
     ..addOption("file", abbr: "f", help: "The warden yaml file.")
     ..addFlag("version", abbr: "v", help: "Get the latest Warden version.")
@@ -34,24 +36,24 @@ void main(List<String> arguments) async {
     return;
   }
 
-
-
   String wardenFile = "warden.yaml";
   if (argResults.wasParsed("file")) {
     wardenFile = argResults["file"];
   }
 
-  // Create a new instance of Warden
-  final warden = Warden(wardenFilePath: wardenFile);
+  printLogo();
 
-  if (argResults["watch"] != null) {
-    printLogo(true);
+  // Create a new instance of Warden
+  if (argResults["watch"] == true) {
+    print(greenPen("[WARDEN]: 👀Watching..."));
+    final warden = Warden(wardenFilePath: wardenFile);
     warden.watch();
     return;
   }
 
-  if (argResults["build"] != null) {
-    printLogo(false);
+  if (argResults["build"] == true) {
+    print(greenPen("[WARDEN]: 🛠️ Building..."));
+    final warden = Warden(wardenFilePath: wardenFile);
     warden.build();
     return;
   }

@@ -5,4 +5,5 @@ void main(List<String> arguments) {
   const catType = String.fromEnvironment("CAT_TYPE");
   print("API URL = $apiURL");
   print("CAT Type = $catType");
+  print("2");
 }

@@ -100,7 +100,8 @@ class Processor {
   }
 
   _addStoredEnvironmentVarsToArguments() {
-    // We want to be sure that the compile cmd is `dart compile js ...`.
+    // We want to be sure that the compile cmd is `dart compile js ...`. As the
+    // features develop, we might want to revisit this / make less static.
     if (arguments.length >= 2 && arguments[0] == "compile" && arguments[1] == "js") {
       arguments.addAll(environmentArguments);
     }
