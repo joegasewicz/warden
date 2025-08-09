@@ -1,5 +1,8 @@
 import 'package:examples/examples.dart' as examples;
 
 void main(List<String> arguments) {
-  print('Hello world!!');
+  const apiURL = String.fromEnvironment("API_URL");
+  const catType = String.fromEnvironment("CAT_TYPE");
+  print("API URL = $apiURL");
+  print("CAT Type = $catType");
 }

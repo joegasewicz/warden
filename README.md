@@ -32,46 +32,85 @@ Warden is a lightweight CLI tool to watch and compile Dart and Sass files for fr
 Create a `warden.yaml` in your project root:
 
 ```yaml
+# ==============================
+# Warden Configuration
+# ==============================
+
 # The root directory of your source files
-source_dir: examples
+source_dir: example
+
+# The environment mode to run in (choose 'development' or 'production')
+# 🧪 development → local dev settings
+# 🚀 production  → live site settings
+mode: development (default is set to development)
 
 # Where to output built files (JavaScript, CSS, etc.)
-destination: static/
+destination: example/static/
 
-main_file: static/main.js # Main Dart-built JS file
+# Main Dart-built JS file (output location)
+main_file: example/static/main.js
 
-# Dependency handling (e.g. node_modules)
+# ==============================
+# Dependencies
+# ==============================
 dependencies:
+  # Example: Node modules
   - source: example/node_modules
     bundle: true
     files:
       - "poppyjs/dist/Poppy.min.js"
       - "bootstrap/dist/js/bootstrap.min.js"
       - "bootstrap/scss/bootstrap.scss"
+
+  # Example: Another library folder
   - source: example/another
     bundle: true
     files:
       - "lib1/dep1.js"
       - "lib2/dep2.js"
 
-# (Optional) Copies across assets folders (e.g. containing .png, .jpg) to the destination directory
+# ==============================
+# Static Assets
+# ==============================
 assets:
+  # The root folder for static assets like images
   source: example/assets
-  directories: # The directory in source path that you want to copy across to the destination directory
-    - img
+  directories:
+    - img  # Copies `example/assets/img` → `example/static/img`
 
-# Tasks to run
+# ==============================
+# Build Tasks
+# ==============================
 tasks:
+  # 🧪 / 🚀 Dart frontend compilation
   frontend:
     executable: dart
-    args: ["compile", "js", "bin/main.dart", "-o", "../static/main.js"]
-    src: examples # Working directory for Dart files
+    # -O4 → optimised build
+    # -o  → output location
+    # (Warden injects environment variables here via --define for Dart)
+    args: ["compile", "js", "bin/main.dart", "-O4", "-o", "static/main.js"]
+    src: example
 
+  # Sass/CSS build
   styles:
-    executable: dart 
-    args: ["run", "sass", "sass/index.scss:../static/index.css"]
-    src: examples # Working directory for Sass
-    warnings: false # Optional: suppress warnings for this task (default is true)
+    executable: dart
+    args: ["run", "sass", "sass/index.scss:static/index.css"]
+    src: example
+    warnings: false # Optional: suppress warnings
+
+# ==============================
+# Environment Variables
+# These are injected at compile time for Dart
+# Access in Dart using:
+#   const apiUrl = String.fromEnvironment('API_URL');
+# ==============================
+environment:
+  dev:
+    API_URL: "http://localhost:1234/api/v1"
+    CAT_TYPE: "siberian"
+  prod:
+    API_URL: "https://wwww.google.com"
+
 ```
 
 ### ▶️ Running

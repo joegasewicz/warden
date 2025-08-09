@@ -1,6 +1,8 @@
 import 'package:ansicolor/ansicolor.dart';
 import "package:path/path.dart" as p;
+import "package:warden/environment.dart";
 import "package:warden/main_file.dart";
+import "package:warden/mode.dart";
 import 'dart:io';
 import "package:yaml/yaml.dart";
 
@@ -32,8 +34,10 @@ class Warden {
   List<Processor> processors = [];
   final String wardenFilePath;
   late SourceDirectory sourceDirectory;
+  late Mode mode;
   late Destination destination;
   late List<Dependency> dependencies = [];
+  late Environment environment;
   late List<Task> tasks = [];
   late Asset assets;
   late BaseBundler bundler;
@@ -44,11 +48,13 @@ class Warden {
     String fileContent = wardenFile.readAsStringSync();
     dynamic yamlMap = loadYaml(fileContent);
     _setSourceDirectory(yamlMap);
+    _setMode(yamlMap);
     _setMainFile(yamlMap);
     _setDestination(yamlMap);
     _setAssets(yamlMap);
     _setDependencies(yamlMap);
     _setTasks(yamlMap);
+    _setEnvironment(yamlMap);
     // bundler = Bundler(destination.destination, dependencyMainFile: mainFile.src);
     bundler = Bundler(destination, dependencyMainFile: mainFile.src);
   }
@@ -63,6 +69,8 @@ class Warden {
         workingDirectory: task.src,
         warnings: task.warnings,
         name: task.name,
+        environment: environment,
+        mode: mode,
       );
 
       processors.add(processor);
@@ -118,6 +126,10 @@ class Warden {
       sourceDirectory: yamlMap["source_dir"] as String,
     );
   }
+  
+  void _setMode(dynamic yamlMap) {
+      mode = Mode(mode: yamlMap["mode"] as String?);
+  }
 
   void _setMainFile(dynamic yamlMap) {
     mainFile = MainFile(
@@ -136,6 +148,27 @@ class Warden {
         _setDependency(Map<String, dynamic>.from(dependency));
       }
     }
+  }
+
+  void _setEnvironment(dynamic yamlMap) {
+    final environmentData = yamlMap["environment"];
+    Map<String, String> devEnvVariables = {};
+    Map<String, String> prodEnvVariables = {};
+
+    if (environmentData != null) {
+      final devMap = environmentData["dev"] as Map?;
+      final prodMap = environmentData["prod"] as Map?;
+      if (devMap != null) {
+        devEnvVariables.addAll(Map<String, String>.from(devMap));
+      }
+      if (prodMap != null)  {
+        prodEnvVariables.addAll(Map<String, String>.from(prodMap));
+      }
+    }
+    environment = Environment(
+        devEnvVariables: devEnvVariables,
+        prodEnvVariables: prodEnvVariables,
+    );
   }
 
   void _setDependency(Map<String, dynamic> dependency) {
