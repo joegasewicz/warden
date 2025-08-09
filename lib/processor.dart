@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
+import 'package:warden/environment.dart';
+import 'package:warden/mode.dart';
 
 /// A class that runs shell commands from within a Dart application.
 ///
@@ -25,6 +27,9 @@ class Processor {
   String workingDirectory;
   bool warnings;
   String name;
+  Environment environment;
+  Mode mode;
+  List<String> environmentArguments = [];
 
   Processor({
     required this.executable,
@@ -32,7 +37,11 @@ class Processor {
     required this.workingDirectory,
     required this.warnings,
     required this.name,
-  });
+    required this.environment,
+    required this.mode,
+  }) {
+    _addVariables();
+  }
 
   /// Executes the configured command and prints stdout and stderr
   /// with colored formatting.
@@ -47,6 +56,9 @@ class Processor {
     final redPen = AnsiPen()..red(bold: true);
     final bluePen = AnsiPen()..blue();
 
+    if (executable == "dart") {
+        _addStoredEnvironmentVarsToArguments();
+    }
     var result = await Process.run(
       executable,
       arguments,
@@ -72,6 +84,25 @@ class Processor {
       } else {
         stderr.writeln(redPen("[WARDEN]: ⛔[TASK $name]: ${result.stderr}"));
       }
+    }
+  }
+
+  _addVariables() {
+    if (mode.mode == "development") {
+      environment.devEnvVariables.forEach((k, v) {
+          environmentArguments.add("-D$k=$v");
+      });
+    } else {
+      environment.prodEnvVariables.forEach((k, v) {
+        environmentArguments.add("-D$k=$v");
+      });
+    }
+  }
+
+  _addStoredEnvironmentVarsToArguments() {
+    // We want to be sure that the compile cmd is `dart compile js ...`.
+    if (arguments.length >= 2 && arguments[0] == "compile" && arguments[1] == "js") {
+      arguments.addAll(environmentArguments);
     }
   }
 }

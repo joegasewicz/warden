@@ -1,8 +1,8 @@
 source_dir: example
+mode: development
+destination: example/static/
 
-destination: static/
-
-main_file: static/main.js
+main_file: example/static/main.js
 
 dependencies:
   - source: example/node_modules
@@ -25,10 +25,17 @@ assets:
 tasks:
   frontend:
     executable: dart
-    args: ["compile", "js", "bin/main.dart", "-O4", "-o", "../static/main.js"]
+    args: ["compile", "js", "bin/main.dart", "-O4", "-o", "static/main.js"]
     src: example
   styles:
     executable: dart
-    args: ["run", "sass", "sass/index.scss:../static/index.css"]
+    args: ["run", "sass", "sass/index.scss:static/index.css"]
     src: example
     warnings: false
+
+environment:
+  dev:
+    API_URL: "http://localhost:1234/api/v1"
+    CAT_TYPE: "siberian"
+  prod:
+    API_URL: "https://wwww.google.com"
