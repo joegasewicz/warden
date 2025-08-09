@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:ansicolor/ansicolor.dart';
 
 enum CompileType {
