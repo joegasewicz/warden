@@ -37,3 +37,6 @@
 - Added `mode` setting for 🧪 development and 🚀 production builds.
 - Added support for injecting environment variables into frontend Dart builds via `environment` config.
 - Updated README with examples for mode and environment variable usage.
+
+## 0.6.1
+- Version fix
