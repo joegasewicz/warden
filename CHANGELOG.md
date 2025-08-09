@@ -32,3 +32,8 @@
 
 ## 0.5.2
 - 🪲Bug fix for dart watch not waiting for tasks to complete before re-bundling.
+
+## 0.6.0
+- Added `mode` setting for 🧪 development and 🚀 production builds.
+- Added support for injecting environment variables into frontend Dart builds via `environment` config.
+- Updated README with examples for mode and environment variable usage.
