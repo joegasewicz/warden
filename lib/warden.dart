@@ -131,7 +131,7 @@ class Warden {
       for (var processor in processors) {
         if (!normalized.contains(destination.destination)) {
           print(greenPen(
-              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
+              "🔍Changes detected in ${event.path}. Recompiling"));
           futures.add(processor.run());
         }
       }
@@ -173,7 +173,7 @@ class Warden {
       for (var processor in processors) {
         if (!normalized.contains(destination.destination)) {
           print(greenPen(
-              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
+              "🔍Changes detected in ${event.path}. Recompiling"));
           futures.add(processor.run());
         }
       }

@@ -58,7 +58,7 @@ class AssetMover {
 
       if (!sourceDir.existsSync()) {
         stderr.writeln(
-            redPen("[WARDEN]: ⚠️Missing asset directory ${sourceDir.path}"));
+            redPen("⚠️ missing asset directory [${sourceDir.path}]"));
         continue;
       }
       for (final entity in sourceDir.listSync(recursive: true)) {
@@ -68,7 +68,7 @@ class AssetMover {
           targetFile.createSync(recursive: true);
           targetFile.writeAsBytesSync(entity.readAsBytesSync());
           print(greenPen(
-              "[WARDEN]: ✅Copied asset: ${entity.path} -> ${targetFile.path}"));
+              "✅ copied asset: [${entity.path} -> ${targetFile.path}]"));
         }
       }
     }
@@ -82,13 +82,13 @@ class AssetMover {
       );
 
       if (!source.existsSync()) {
-        stderr.writeln(redPen("[WARDEN]: ⚠️Missing file: ${source.path}"));
+        stderr.writeln(redPen("⚠️ missing file: [${source.path}]"));
         continue;
       }
 
       destination.createSync(recursive: true);
       destination.writeAsBytesSync(source.readAsBytesSync());
-      print(greenPen("[WARDEN]: ✅Moved ${source.path} -> ${destination.path}"));
+      print(greenPen("✅ moved [${source.path} -> ${destination.path}]"));
     }
   }
 }

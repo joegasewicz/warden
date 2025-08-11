@@ -1,3 +1,4 @@
+import 'package:ansi_styles/ansi_styles.dart';
 import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
@@ -45,7 +46,7 @@ void main(List<String> arguments) async {
 
   // Create a new instance of Warden
   if (argResults["watch"] == true) {
-    print(greenPen("[WARDEN]: 👀Watching..."));
+    print(AnsiStyles.green.bold("👀watching..."));
     final warden = Warden(
         wardenFilePath: wardenFile,
         debug: argResults["debug"],
@@ -55,7 +56,7 @@ void main(List<String> arguments) async {
   }
 
   if (argResults["build"] == true) {
-    print(greenPen("[WARDEN]: 🛠️ Building..."));
+    print(greenPen("🛠️ building..."));
     final warden = Warden(
         wardenFilePath: wardenFile,
         debug: argResults["debug"],

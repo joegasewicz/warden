@@ -12,7 +12,7 @@ class Environment {
     required this.prodEnvVariables,
   }) {
     if (devEnvVariables.isNotEmpty) {
-      print(blue("[WARDEN]: 🛠️ Dev environment variables set successfully:"));
+      print(blue("🛠️ dev environment variables set successfully:"));
       devEnvVariables.forEach((key, value) {
         print("\t 🟢 $key: $value");
       });

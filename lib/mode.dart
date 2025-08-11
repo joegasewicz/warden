@@ -12,17 +12,17 @@ class Mode {
   Mode({required this.mode}) {
     if (mode == null) {
       mode = "development";
-      print(yellowPen("[WARDEN]: ⚠️No mode set. Setting to 'development' environment."));
+      print(yellowPen("⚠️no mode set. Setting to 'development' environment."));
     } else {
       switch(mode) {
         case "development":
-          print(greenPen("[WARDEN]: 🧪Mode set to 'development' environment."));
+          print(greenPen("🧪mode set to 'development' environment."));
           break;
         case "production":
-          print(greenPen("[WARDEN]: 🚀Mode set to 'production' environment"));
+          print(greenPen("🚀mode set to 'production' environment"));
           break;
         default:
-          print(redPen("[WARDEN]: ❌Fatal error: Mode must be set to either 'production' or 'development'!"));
+          print(redPen("❌fatal error: Mode must be set to either 'production' or 'development'!"));
           exit(1);
       }
     }
