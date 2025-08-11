@@ -40,3 +40,7 @@
 
 ## 0.6.1
 - Version fix
+
+## 0.7.0
+* Watch & build modes
+* debug & logging
