@@ -1,9 +1,9 @@
-![pub package](https://img.shields.io/pub/v/warden.svg)  
-![Dart](https://img.shields.io/badge/Dart-3.7%2B-blue)  
-
 <div align="center">
 	<img src="example/logo.png" alt="Warden" width="500"/>
 </div>
+![pub package](https://img.shields.io/pub/v/warden.svg)  
+![Dart](https://img.shields.io/badge/Dart-3.7%2B-blue)
+[![Dart](https://github.com/joegasewicz/warden/actions/workflows/dart.yml/badge.svg)](https://github.com/joegasewicz/warden/actions/workflows/dart.yml)
 
 **Static builder & bundler for Dart projects**
 
