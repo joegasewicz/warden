@@ -1,5 +1,7 @@
+import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
+import 'package:warden/excluder.dart';
 import 'package:warden/warden.dart';
 
 /// Entry point for the Warden CLI.
@@ -18,9 +20,13 @@ import 'package:warden/warden.dart';
 /// dart run warden --file=example/warden.yaml
 /// ```
 void main(List<String> arguments) async {
+  AnsiPen greenPen = AnsiPen()..green();
   final parser = ArgParser()
     ..addOption("file", abbr: "f", help: "The warden yaml file.")
-    ..addFlag("version", abbr: "v", help: "Get the latest Warden version.");
+    ..addFlag("version", abbr: "v", help: "Get the latest Warden version.")
+    ..addFlag("build", abbr: "b", help: "Build command.")
+    ..addFlag("watch", abbr: "w", help: "Build & watch for file changes.")
+    ..addFlag("debug", abbr: "d", help: "Debug mode.");
 
   // Handle args
   final argResults = parser.parse(arguments);
@@ -31,13 +37,34 @@ void main(List<String> arguments) async {
     return;
   }
 
-  printLogo();
-
   String wardenFile = "warden.yaml";
   if (argResults.wasParsed("file")) {
     wardenFile = argResults["file"];
   }
 
-  final warden = Warden(wardenFilePath: wardenFile);
-  warden.run();
+  printLogo();
+
+  // Create a new instance of Warden
+  if (argResults["watch"] == true) {
+    print(greenPen("[WARDEN]: 👀Watching..."));
+    final warden = Warden(
+        wardenFilePath: wardenFile,
+        debug: argResults["debug"],
+    );
+    warden.watch();
+    return;
+  }
+
+  if (argResults["build"] == true) {
+    print(greenPen("[WARDEN]: 🛠️ Building..."));
+    final warden = Warden(
+        wardenFilePath: wardenFile,
+        debug: argResults["debug"],
+    );
+    warden.build();
+    return;
+  }
+
+  // Print out usage if no flags are set
+  print(parser.usage);
 }

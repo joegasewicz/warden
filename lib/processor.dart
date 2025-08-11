@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
+import 'package:logging/logging.dart';
 import 'package:warden/environment.dart';
+import 'package:warden/logger.dart';
 import 'package:warden/mode.dart';
 
 /// A class that runs shell commands from within a Dart application.
@@ -30,6 +32,8 @@ class Processor {
   Environment environment;
   Mode mode;
   List<String> environmentArguments = [];
+  Logger log = createLogger();
+  bool debug;
 
   Processor({
     required this.executable,
@@ -39,6 +43,7 @@ class Processor {
     required this.name,
     required this.environment,
     required this.mode,
+    required this.debug,
   }) {
     _addVariables();
   }
@@ -89,10 +94,16 @@ class Processor {
 
   _addVariables() {
     if (mode.mode == "development") {
+      if (debug) {
+        log.info("Setting development environment variables.");
+      }
       environment.devEnvVariables.forEach((k, v) {
           environmentArguments.add("-D$k=$v");
       });
     } else {
+      if (debug) {
+        log.info("Setting production environment variables.");
+      }
       environment.prodEnvVariables.forEach((k, v) {
         environmentArguments.add("-D$k=$v");
       });
@@ -100,7 +111,8 @@ class Processor {
   }
 
   _addStoredEnvironmentVarsToArguments() {
-    // We want to be sure that the compile cmd is `dart compile js ...`.
+    // We want to be sure that the compile cmd is `dart compile js ...`. As the
+    // features develop, we might want to revisit this / make less static.
     if (arguments.length >= 2 && arguments[0] == "compile" && arguments[1] == "js") {
       arguments.addAll(environmentArguments);
     }

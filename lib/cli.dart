@@ -1,10 +1,12 @@
 import 'package:ansicolor/ansicolor.dart';
 
-void printLogo() {
-  AnsiPen greenPen = AnsiPen()..green();
+enum CompileType {
+  watch,
+  build,
+}
 
+void printLogo() {
   print(drawLogo());
-  print(greenPen("[WARDEN]: 👀Watching..."));
 }
 
 String drawLogo() {

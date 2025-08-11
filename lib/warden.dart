@@ -1,6 +1,9 @@
 import 'package:ansicolor/ansicolor.dart';
+import "package:logging/logging.dart";
 import "package:path/path.dart" as p;
 import "package:warden/environment.dart";
+import "package:warden/excluder.dart";
+import "package:warden/logger.dart";
 import "package:warden/main_file.dart";
 import "package:warden/mode.dart";
 import 'dart:io';
@@ -33,6 +36,8 @@ import 'package:watcher/watcher.dart';
 class Warden {
   List<Processor> processors = [];
   final String wardenFilePath;
+  final bool debug;
+  late Excluder excluder;
   late SourceDirectory sourceDirectory;
   late Mode mode;
   late Destination destination;
@@ -42,8 +47,13 @@ class Warden {
   late Asset assets;
   late BaseBundler bundler;
   late MainFile mainFile;
+  final greenPen = AnsiPen()..green();
+  Logger log = createLogger();
 
-  Warden({required this.wardenFilePath}) {
+  Warden({
+    required this.wardenFilePath,
+    required this.debug,
+  }) {
     File wardenFile = File(wardenFilePath);
     String fileContent = wardenFile.readAsStringSync();
     dynamic yamlMap = loadYaml(fileContent);
@@ -55,8 +65,80 @@ class Warden {
     _setDependencies(yamlMap);
     _setTasks(yamlMap);
     _setEnvironment(yamlMap);
-    // bundler = Bundler(destination.destination, dependencyMainFile: mainFile.src);
+
+    if (debug) {
+      log.info("🐛Debug mode");
+    }
+
     bundler = Bundler(destination, dependencyMainFile: mainFile.src);
+    final List<String> ignoredExtensions = [".tmp", ".DS_Store"];
+    final List<String> ignoredDirs = [destination.destination];
+
+    excluder = Excluder(
+        ignoredExtensions: ignoredExtensions,
+        ignoredDirs: ignoredDirs,
+        debug: debug,
+    );
+  }
+
+  watch() async {
+    await _runInitialBuild();
+    final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
+    _runWatcher(watcher);
+  }
+
+  build() async {
+    await _runInitialBuild();
+  }
+
+  _runInitialBuild() async {
+    for (var task in tasks) {
+      final processor = Processor(
+        executable: task.executable,
+        arguments: task.args,
+        workingDirectory: task.src,
+        warnings: task.warnings,
+        name: task.name,
+        environment: environment,
+        mode: mode,
+        debug: debug,
+      );
+
+      processors.add(processor);
+    }
+
+    // Initiate initial compilations
+    for (var processor in processors) {
+      await processor.run();
+    }
+    // pre bundle the initial run
+    _bundleAndMoveFiles();
+  }
+
+  _runWatcher(Watcher watcher) {
+     watcher.events.listen((event) async {
+      final normalized = p.normalize(event.path);
+      // Ignore files
+      if (excluder.containsIgnoredFileExt(event.path)) {
+        return;
+      }
+      if (excluder.containsExcludedDirs(event.path)) {
+        return;
+      }
+
+      final futures = <Future>[];
+      // Recompile
+      for (var processor in processors) {
+        if (!normalized.contains(destination.destination)) {
+          print(greenPen(
+              "[WARDEN]: 🔍Changes detected in ${event.path}. Recompiling"));
+          futures.add(processor.run());
+        }
+      }
+      // Wait for all processes to run & then re bundle file
+      await Future.wait(futures);
+      _bundleAndMoveFiles();
+    });
   }
 
   run() async {
@@ -71,6 +153,7 @@ class Warden {
         name: task.name,
         environment: environment,
         mode: mode,
+        debug: debug,
       );
 
       processors.add(processor);
@@ -126,7 +209,7 @@ class Warden {
       sourceDirectory: yamlMap["source_dir"] as String,
     );
   }
-  
+
   void _setMode(dynamic yamlMap) {
       mode = Mode(mode: yamlMap["mode"] as String?);
   }

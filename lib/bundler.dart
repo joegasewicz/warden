@@ -58,10 +58,11 @@ abstract class BaseBundler {
   }
 
   void _bundleMainFile(StringBuffer buffer, String dependencyMainFile) {
+    // The compiled output is temporally stored in the destination directory.
     final mainSrc = File(dependencyMainFile);
     if (!mainSrc.existsSync()) {
-      stderr.writeln(
-          redPen("[Warden]: ⛔️Missing file for bundling: ${mainSrc.path}"));
+      stderr.writeln(redPen("[Warden]: ⛔️ Fatal: missing file for bundling: ${mainSrc.path}"));
+      // exit(1);
     } else {
       buffer.writeln(
           "// ---------------------------------------------------- //");
@@ -71,7 +72,7 @@ abstract class BaseBundler {
           "// -----------------------------------------------------//");
       final mainContent = mainSrc.readAsStringSync();
       buffer.writeln(mainContent);
-      // Delete `main` file
+      // Delete the main compiled output file as this is now included in the bundle file.
       mainSrc.delete();
     }
   }
