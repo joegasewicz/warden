@@ -1,5 +1,6 @@
-![pub package](https://img.shields.io/pub/v/warden.svg)
-![Dart](https://img.shields.io/badge/Dart-3.7%2B-blue)
+![pub package](https://img.shields.io/pub/v/warden.svg)  
+![Dart](https://img.shields.io/badge/Dart-3.7%2B-blue)  
+
 <div align="center">
 	<img src="example/logo.png" alt="Warden" width="500"/>
 </div>
@@ -15,15 +16,41 @@ Warden is a lightweight CLI tool to watch and compile Dart and Sass files for fr
 ## ✨ Features
 
 - 🔁 Watches your Dart and Sass files and recompiles on change  
-- 📦 Moves specified dependencies (e.g. node_modules assets) into your build output 
-- 🗂️ Moves specified asset directories (e.g. `assets/img/`) into your build output 
+- 📦 Moves specified dependencies (e.g. node_modules assets) into your build output  
+- 🗂️ Moves specified asset directories (e.g. `assets/img/`) into your build output  
 - 🛠️ Bundles your dependency JS files into a single `bundle.js` (optional)  
 - 🧱 Fully configurable via a `warden.yaml` file  
-- 🎯 Supports multiple tasks like compiling Dart to JS and Sass to CSS
+- 🎯 Supports multiple tasks like compiling Dart to JS and Sass to CSS  
+- 🧪 **Debug mode logging** to see every file operation and build step  
+- 🚀 **Production mode** for optimised builds with minified output  
 
 ---
 
 ![Screenshot](example/screen5.png)
+---
+
+### 📦 Installation
+
+```bash
+dart pub global activate warden
+```
+Then run:
+```bash
+warden --file=warden.yaml
+```
+---
+
+### ▶️ Running
+Run Warden in **watch mode**:
+```bash
+dart run warden --file=warden.yaml
+```
+Or for a one-off build:
+```bash
+dart run warden --file=warden.yaml --once
+```
+**Debug mode** (development) will show verbose file change and build logs.  
+Switch to **production** to build optimised/minified JS and CSS.
 
 ---
 
@@ -40,9 +67,9 @@ Create a `warden.yaml` in your project root:
 source_dir: example
 
 # The environment mode to run in (choose 'development' or 'production')
-# 🧪 development → local dev settings
-# 🚀 production  → live site settings
-mode: development (default is set to development)
+# 🧪 development → Local dev settings, debug logging enabled
+# 🚀 production  → Live site settings, minified builds
+mode: development # Default is development
 
 # Where to output built files (JavaScript, CSS, etc.)
 destination: example/static/
@@ -54,7 +81,6 @@ main_file: example/static/main.js
 # Dependencies
 # ==============================
 dependencies:
-  # Example: Node modules
   - source: example/node_modules
     bundle: true
     files:
@@ -62,18 +88,10 @@ dependencies:
       - "bootstrap/dist/js/bootstrap.min.js"
       - "bootstrap/scss/bootstrap.scss"
 
-  # Example: Another library folder
-  - source: example/another
-    bundle: true
-    files:
-      - "lib1/dep1.js"
-      - "lib2/dep2.js"
-
 # ==============================
 # Static Assets
 # ==============================
 assets:
-  # The root folder for static assets like images
   source: example/assets
   directories:
     - img  # Copies `example/assets/img` → `example/static/img`
@@ -82,58 +100,32 @@ assets:
 # Build Tasks
 # ==============================
 tasks:
-  # 🧪 / 🚀 Dart frontend compilation
   frontend:
     executable: dart
-    # -O4 → optimised build
-    # -o  → output location
-    # (Warden injects environment variables here via --define for Dart)
     args: ["compile", "js", "bin/main.dart", "-O4", "-o", "static/main.js"]
     src: example
 
-  # Sass/CSS build
   styles:
     executable: dart
     args: ["run", "sass", "sass/index.scss:static/index.css"]
     src: example
-    warnings: false # Optional: suppress warnings
+    warnings: false
 
 # ==============================
 # Environment Variables
 # These are injected at compile time for Dart
-# Access in Dart using:
-#   const apiUrl = String.fromEnvironment('API_URL');
 # ==============================
 environment:
   dev:
     API_URL: "http://localhost:1234/api/v1"
     CAT_TYPE: "siberian"
+    DEBUG_MODE: "true"
   prod:
-    API_URL: "https://wwww.google.com"
-
+    API_URL: "https://www.google.com"
+    DEBUG_MODE: "false"
 ```
 
-### ▶️ Running
-Run Warden from your terminal in watch mode:
-```
-dart run warden --file=warden.yaml
-```
-This will:
-	•	Move files listed in dependencies.files into the output directory
-	•	Bundle them into a single bundle.js if bundle: true
-	•	Compile Dart to JS
-	•	Compile Sass to CSS
-	•	Watch and recompile on file changes
-
-### 📦 Installation
-
-```bash
-dart pub global activate warden
-```
-Then run from any Dart project:
-```bash
-warden --file=warden.yaml
-```
+---
 
 ### 🧪 Example Project Structure
 ```
@@ -148,10 +140,11 @@ examples/
 ├── warden.yaml
 ```
 
-### Contributions
+---
+
+**Contributions**  
 Please open an issue or reply to an existing issue requesting that you would like
 to work on it. PRs that do not fix a known bug or add new features will be closed.
 
-License
-
+**License**  
 MIT © 2025 joegasewicz
