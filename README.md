@@ -43,15 +43,17 @@ warden --file=warden.yaml
 ### ▶️ Running
 Run Warden in **watch mode**:
 ```bash
-dart run warden --file=warden.yaml
+dart run warden --file=warden.yaml --watch
 ```
 Or for a one-off build:
 ```bash
-dart run warden --file=warden.yaml --once
+dart run warden --file=warden.yaml --build
 ```
 **Debug mode** (development) will show verbose file change and build logs.  
 Switch to **production** to build optimised/minified JS and CSS.
-
+```bash
+dart run warden --file=warden.yaml --watch --debug
+```
 ---
 
 ## ⚙️ Setup
