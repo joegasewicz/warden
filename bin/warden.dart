@@ -1,6 +1,7 @@
 import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
+import 'package:warden/excluder.dart';
 import 'package:warden/warden.dart';
 
 /// Entry point for the Warden CLI.
@@ -46,19 +47,24 @@ void main(List<String> arguments) async {
   // Create a new instance of Warden
   if (argResults["watch"] == true) {
     print(greenPen("[WARDEN]: 👀Watching..."));
-    final warden = Warden(wardenFilePath: wardenFile);
+    final warden = Warden(
+        wardenFilePath: wardenFile,
+        debug: argResults["debug"],
+    );
     warden.watch();
     return;
   }
 
   if (argResults["build"] == true) {
     print(greenPen("[WARDEN]: 🛠️ Building..."));
-    final warden = Warden(wardenFilePath: wardenFile);
+    final warden = Warden(
+        wardenFilePath: wardenFile,
+        debug: argResults["debug"],
+    );
     warden.build();
     return;
   }
 
   // Print out usage if no flags are set
   print(parser.usage);
-
 }

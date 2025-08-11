@@ -2,22 +2,36 @@
 
 import 'dart:io';
 
+import 'package:logging/logging.dart';
+import 'package:warden/logger.dart';
+
 class Excluder {
 
   List<String> ignoredExtensions;
   List<String> ignoredDirs;
   bool debug;
+  Logger log = createLogger();
 
   Excluder({
     required this.ignoredExtensions,
     required this.ignoredDirs,
     required this.debug,
-  });
+  }) {
+    // Remove all end slashes from dir paths
+    for (var i = 0; i < ignoredDirs.length; i++) {
+      if (ignoredDirs[i].endsWith(Platform.pathSeparator)) {
+        ignoredDirs[i] = ignoredDirs[i].substring(0, ignoredDirs[i].length -1);
+      }
+    }
+  }
 
-  containsIgnoredFileExt(File file) {
+  containsIgnoredFileExt(String path) {
     bool ignoredExtension = false;
     for (final ext in ignoredExtensions) {
-      if (file.path.endsWith(ext)) {
+      if (path.endsWith(ext)) {
+        if (debug) {
+          log.info("Ignored file - $path with extension - $ext");
+        }
         ignoredExtension = true;
         break;
       }
@@ -25,11 +39,13 @@ class Excluder {
     return ignoredExtension;
   }
 
-  excludeDirs(File file) {
+  containsExcludedDirs(String path) {
     bool ignoredDir = false;
     for (final dir in ignoredDirs) {
-      final dirPattern = "${Platform.pathSeparator}$dir${Platform.pathSeparator}";
-      if(file.path.contains(dirPattern)) {
+      if(path.contains(dir)) {
+        if (debug) {
+          log.info("Ignored directory - $dir for path: $path");
+        }
         ignoredDir = true;
         break;
       }

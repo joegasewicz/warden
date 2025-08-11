@@ -1,7 +1,9 @@
 import 'package:ansicolor/ansicolor.dart';
+import "package:logging/logging.dart";
 import "package:path/path.dart" as p;
 import "package:warden/environment.dart";
 import "package:warden/excluder.dart";
+import "package:warden/logger.dart";
 import "package:warden/main_file.dart";
 import "package:warden/mode.dart";
 import 'dart:io';
@@ -34,7 +36,8 @@ import 'package:watcher/watcher.dart';
 class Warden {
   List<Processor> processors = [];
   final String wardenFilePath;
-  final Excluder excluder;
+  final bool debug;
+  late Excluder excluder;
   late SourceDirectory sourceDirectory;
   late Mode mode;
   late Destination destination;
@@ -44,13 +47,12 @@ class Warden {
   late Asset assets;
   late BaseBundler bundler;
   late MainFile mainFile;
-
-
   final greenPen = AnsiPen()..green();
+  Logger log = createLogger();
 
   Warden({
     required this.wardenFilePath,
-    required this.excluder,
+    required this.debug,
   }) {
     File wardenFile = File(wardenFilePath);
     String fileContent = wardenFile.readAsStringSync();
@@ -63,7 +65,20 @@ class Warden {
     _setDependencies(yamlMap);
     _setTasks(yamlMap);
     _setEnvironment(yamlMap);
+
+    if (debug) {
+      log.info("🐛Debug mode");
+    }
+
     bundler = Bundler(destination, dependencyMainFile: mainFile.src);
+    final List<String> ignoredExtensions = [".tmp", ".DS_Store"];
+    final List<String> ignoredDirs = [destination.destination];
+
+    excluder = Excluder(
+        ignoredExtensions: ignoredExtensions,
+        ignoredDirs: ignoredDirs,
+        debug: debug,
+    );
   }
 
   watch() async {
@@ -86,6 +101,7 @@ class Warden {
         name: task.name,
         environment: environment,
         mode: mode,
+        debug: debug,
       );
 
       processors.add(processor);
@@ -103,8 +119,12 @@ class Warden {
      watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
       // Ignore files
-      final ignoredExtensions = [".DS_Store", ".tmp"];
-      final ignoredDirs = [destination.destination];
+      if (excluder.containsIgnoredFileExt(event.path)) {
+        return;
+      }
+      if (excluder.containsExcludedDirs(event.path)) {
+        return;
+      }
 
       final futures = <Future>[];
       // Recompile
@@ -133,6 +153,7 @@ class Warden {
         name: task.name,
         environment: environment,
         mode: mode,
+        debug: debug,
       );
 
       processors.add(processor);
