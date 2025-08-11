@@ -33,7 +33,7 @@ void main(List<String> arguments) async {
 
   // Handle version
   if (argResults["version"]) {
-    print("v0.6.1");
+    print("v0.7.0");
     return;
   }
 
