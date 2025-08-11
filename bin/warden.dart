@@ -24,8 +24,8 @@ void main(List<String> arguments) async {
     ..addOption("file", abbr: "f", help: "The warden yaml file.")
     ..addFlag("version", abbr: "v", help: "Get the latest Warden version.")
     ..addFlag("build", abbr: "b", help: "Build command.")
-    ..addFlag("watch", abbr: "w", help: "Build & watch for file changes.");
-
+    ..addFlag("watch", abbr: "w", help: "Build & watch for file changes.")
+    ..addFlag("debug", abbr: "d", help: "Debug mode.");
 
   // Handle args
   final argResults = parser.parse(arguments);

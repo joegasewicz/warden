@@ -1,6 +1,7 @@
 import 'package:ansicolor/ansicolor.dart';
 import "package:path/path.dart" as p;
 import "package:warden/environment.dart";
+import "package:warden/excluder.dart";
 import "package:warden/main_file.dart";
 import "package:warden/mode.dart";
 import 'dart:io';
@@ -33,6 +34,7 @@ import 'package:watcher/watcher.dart';
 class Warden {
   List<Processor> processors = [];
   final String wardenFilePath;
+  final Excluder excluder;
   late SourceDirectory sourceDirectory;
   late Mode mode;
   late Destination destination;
@@ -43,9 +45,13 @@ class Warden {
   late BaseBundler bundler;
   late MainFile mainFile;
 
+
   final greenPen = AnsiPen()..green();
 
-  Warden({required this.wardenFilePath}) {
+  Warden({
+    required this.wardenFilePath,
+    required this.excluder,
+  }) {
     File wardenFile = File(wardenFilePath);
     String fileContent = wardenFile.readAsStringSync();
     dynamic yamlMap = loadYaml(fileContent);
@@ -71,8 +77,6 @@ class Warden {
   }
 
   _runInitialBuild() async {
-
-
     for (var task in tasks) {
       final processor = Processor(
         executable: task.executable,
@@ -98,6 +102,10 @@ class Warden {
   _runWatcher(Watcher watcher) {
      watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
+      // Ignore files
+      final ignoredExtensions = [".DS_Store", ".tmp"];
+      final ignoredDirs = [destination.destination];
+
       final futures = <Future>[];
       // Recompile
       for (var processor in processors) {
