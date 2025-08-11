@@ -1,7 +1,6 @@
 import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
-import 'package:warden/excluder.dart';
 import 'package:warden/warden.dart';
 
 /// Entry point for the Warden CLI.
