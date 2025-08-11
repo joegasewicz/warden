@@ -1,5 +1,3 @@
-import 'package:examples/examples.dart' as examples;
-
 void main(List<String> arguments) {
   const apiURL = String.fromEnvironment("API_URL");
   const catType = String.fromEnvironment("CAT_TYPE");
