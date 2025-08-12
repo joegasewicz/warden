@@ -29,7 +29,7 @@ Warden is a lightweight CLI tool to watch and compile Dart and Sass files for fr
 
 ---
 
-![Screenshot](example/newcli.png)
+![Screenshot](example/cli2.png)
 ---
 
 ### 📦 Installation
