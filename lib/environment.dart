@@ -1,20 +1,19 @@
 
 
-import 'package:ansicolor/ansicolor.dart';
+import 'package:ansi_styles/ansi_styles.dart';
 
 class Environment {
   Map<String, String> devEnvVariables;
   Map<String, String> prodEnvVariables;
-  AnsiPen blue = AnsiPen()..blue();
 
   Environment({
     required this.devEnvVariables,
     required this.prodEnvVariables,
   }) {
     if (devEnvVariables.isNotEmpty) {
-      print(blue("🛠️ dev environment variables set successfully:"));
+      print("${AnsiStyles.green("◆")} ${AnsiStyles.cyan("dev environment variables set successfully:")}");
       devEnvVariables.forEach((key, value) {
-        print("\t 🟢 $key: $value");
+        print("\t ${AnsiStyles.blueBright("◆")} ${AnsiStyles.cyan("$key: ")}${AnsiStyles.magenta("[$value]")}");
       });
     }
   }

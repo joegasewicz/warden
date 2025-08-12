@@ -1,5 +1,5 @@
 import "dart:io";
-import "package:ansicolor/ansicolor.dart";
+import "package:ansi_styles/ansi_styles.dart";
 import "package:path/path.dart" as p;
 import "package:warden/assets.dart";
 import "package:warden/destination.dart";
@@ -18,16 +18,12 @@ class AssetMover {
   final Asset assets;
   late Directory nodeModules;
   late Directory outputDir;
-  late AnsiPen greenPen;
-  late AnsiPen redPen;
 
   AssetMover({
     required this.destination,
     required this.assets,
   }) {
     outputDir = Directory(destination.destination);
-    greenPen = AnsiPen()..green();
-    redPen = AnsiPen()..red(bold: true);
   }
 
   /// Copies each file defined in `dependencies.files` from the `node_modules` directory
@@ -58,7 +54,7 @@ class AssetMover {
 
       if (!sourceDir.existsSync()) {
         stderr.writeln(
-            redPen("⚠️ missing asset directory [${sourceDir.path}]"));
+            AnsiStyles.red("⚠ missing asset directory [${sourceDir.path}]"));
         continue;
       }
       for (final entity in sourceDir.listSync(recursive: true)) {
@@ -67,8 +63,7 @@ class AssetMover {
           final targetFile = File(p.join(destDir.path, relative));
           targetFile.createSync(recursive: true);
           targetFile.writeAsBytesSync(entity.readAsBytesSync());
-          print(greenPen(
-              "✅ copied asset: [${entity.path} -> ${targetFile.path}]"));
+          print("${AnsiStyles.cyan("✔ copied asset: ")}${AnsiStyles.magenta("[${entity.path} -> ${targetFile.path}]")}");
         }
       }
     }
@@ -82,13 +77,13 @@ class AssetMover {
       );
 
       if (!source.existsSync()) {
-        stderr.writeln(redPen("⚠️ missing file: [${source.path}]"));
+        stderr.writeln(AnsiStyles.red("✖ missing file: [${source.path}]"));
         continue;
       }
 
       destination.createSync(recursive: true);
       destination.writeAsBytesSync(source.readAsBytesSync());
-      print(greenPen("✅ moved [${source.path} -> ${destination.path}]"));
+      print(AnsiStyles.green("✔ moved [${source.path} -> ${destination.path}]"));
     }
   }
 }

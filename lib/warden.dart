@@ -1,4 +1,4 @@
-import 'package:ansicolor/ansicolor.dart';
+import "package:ansi_styles/ansi_styles.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as p;
 import "package:warden/environment.dart";
@@ -47,7 +47,6 @@ class Warden {
   late Asset assets;
   late BaseBundler bundler;
   late MainFile mainFile;
-  final greenPen = AnsiPen()..green();
   Logger log = createLogger();
 
   Warden({
@@ -88,10 +87,12 @@ class Warden {
   }
 
   build() async {
+
     await _runInitialBuild();
   }
 
   _runInitialBuild() async {
+    final stopwatch = Stopwatch()..start();
     for (var task in tasks) {
       final processor = Processor(
         executable: task.executable,
@@ -112,7 +113,7 @@ class Warden {
       await processor.run();
     }
     // pre bundle the initial run
-    _bundleAndMoveFiles();
+    _bundleAndMoveFiles(stopwatch);
   }
 
   _runWatcher(Watcher watcher) {
@@ -125,24 +126,24 @@ class Warden {
       if (excluder.containsExcludedDirs(event.path)) {
         return;
       }
-
+      final stopwatch = Stopwatch()..start();
       final futures = <Future>[];
       // Recompile
       for (var processor in processors) {
         if (!normalized.contains(destination.destination)) {
-          print(greenPen(
+          print(AnsiStyles.green(
               "🔍Changes detected in ${event.path}. Recompiling"));
           futures.add(processor.run());
         }
       }
       // Wait for all processes to run & then re bundle file
       await Future.wait(futures);
-      _bundleAndMoveFiles();
+      _bundleAndMoveFiles(stopwatch);
     });
   }
 
   run() async {
-    final greenPen = AnsiPen()..green();
+    final stopwatch = Stopwatch()..start();
     final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
     for (var task in tasks) {
       final processor = Processor(
@@ -164,7 +165,7 @@ class Warden {
       await processor.run();
     }
     // pre bundle the initial run
-    _bundleAndMoveFiles();
+    _bundleAndMoveFiles(stopwatch);
 
     watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
@@ -172,18 +173,18 @@ class Warden {
       // Recompile
       for (var processor in processors) {
         if (!normalized.contains(destination.destination)) {
-          print(greenPen(
+          print(AnsiStyles.green(
               "🔍Changes detected in ${event.path}. Recompiling"));
           futures.add(processor.run());
         }
       }
       // Wait for all processes to run & then re bundle file
       await Future.wait(futures);
-      _bundleAndMoveFiles();
+      _bundleAndMoveFiles(stopwatch);
     });
   }
 
-  void _bundleAndMoveFiles() {
+  void _bundleAndMoveFiles(Stopwatch stopwatch) {
     bundler.destroyBundleFile();
     // Initiate the String buffer
     bundler.start();
@@ -201,7 +202,7 @@ class Warden {
       }
     }
     // Bundle the main file
-    bundler.end();
+    bundler.end(stopwatch);
   }
 
   void _setSourceDirectory(dynamic yamlMap) {

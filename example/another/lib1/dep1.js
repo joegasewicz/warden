@@ -1,1 +1,1 @@
-console.log("__ALEMBIC_");
+console.log("__ALEC_");

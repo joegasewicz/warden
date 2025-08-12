@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:ansicolor/ansicolor.dart';
+import 'package:ansi_styles/ansi_styles.dart';
+import 'package:cli_spinner/cli_spinner.dart';
 import 'package:logging/logging.dart';
 import 'package:warden/environment.dart';
 import 'package:warden/logger.dart';
@@ -57,21 +58,26 @@ class Processor {
   ///
   /// The method returns a [Future] that completes after the command runs.
   dynamic run() async {
-    final greenPen = AnsiPen()..green();
-    final redPen = AnsiPen()..red(bold: true);
-    final bluePen = AnsiPen()..blue();
 
     if (executable == "dart") {
         _addStoredEnvironmentVarsToArguments();
     }
+    final stopwatch = Stopwatch()..start();
+    final taskSpinner = Spinner(AnsiStyles.cyan("✔ [task ${AnsiStyles.cyanBright.bold(name)}${AnsiStyles.cyan("] started...")}"));
+    taskSpinner.start();
     var result = await Process.run(
       executable,
       arguments,
       workingDirectory: workingDirectory,
     );
+    taskSpinner.stop();
+    stopwatch.stop();
 
     if (result.stdout.toString().trim().isNotEmpty) {
-      stdout.writeln(greenPen("✅ [task $name]: ${result.stdout}"));
+      stdout.writeln(_printTime(stopwatch, result.stdout));
+      if (debug) {
+        log.info("[task $name] ${AnsiStyles.magenta("[${result.stdout}]")}");
+      }
     }
 
     if (result.stderr.toString().trim().isNotEmpty) {
@@ -81,15 +87,16 @@ class Processor {
           result.stderr.toString().trim().toLowerCase().contains("error");
       if (containsWarning && !containsError) {
         if (warnings) {
-          stderr.writeln(bluePen("⚠️ [task $name]: ${result.stderr}"));
+          stderr.writeln(AnsiStyles.yellowBright("⚠ [task $name] ${result.stderr}"));
+
         } else {
-          print(greenPen(
-              "✅ [task $name]: successfully ran task for: $name"));
+          print(_printTime(stopwatch, name));
         }
       } else {
-        stderr.writeln(redPen("⛔[task $name]: ${result.stderr}"));
+        stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
       }
     }
+
   }
 
   _addVariables() {
@@ -116,5 +123,12 @@ class Processor {
     if (arguments.length >= 2 && arguments[0] == "compile" && arguments[1] == "js") {
       arguments.addAll(environmentArguments);
     }
+  }
+
+  String _printTime(Stopwatch stopwatch, String result) {
+    final elapsed = stopwatch.elapsed;
+    return AnsiStyles.cyan("✔ [task ${AnsiStyles.cyanBright.bold(name)}"
+        "${AnsiStyles.cyan("] completed task in took ")}"
+        "${AnsiStyles.white("${elapsed.inSeconds}.${elapsed.inMilliseconds % 1000}s")}");
   }
 }

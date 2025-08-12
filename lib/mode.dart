@@ -1,28 +1,23 @@
 import 'dart:io';
 
-import 'package:ansicolor/ansicolor.dart';
+import 'package:ansi_styles/ansi_styles.dart';
 
 class Mode {
   String? mode;
-  final greenPen = AnsiPen()..green();
-  final redPen = AnsiPen()..red(bold: true);
-  final bluePen = AnsiPen()..blue();
-  final yellowPen = AnsiPen()..yellow(bold: true);
-
   Mode({required this.mode}) {
     if (mode == null) {
       mode = "development";
-      print(yellowPen("⚠️no mode set. Setting to 'development' environment."));
+      print(AnsiStyles.yellow("⚠ no mode set. Setting to 'development' environment."));
     } else {
       switch(mode) {
         case "development":
-          print(greenPen("🧪mode set to 'development' environment."));
+          print("${AnsiStyles.cyan("◆ mode set to")} ${AnsiStyles.magentaBright("[development]")} ${AnsiStyles.cyan("environment")}");
           break;
         case "production":
-          print(greenPen("🚀mode set to 'production' environment"));
+          print("${AnsiStyles.cyan("◆ mode set to")} ${AnsiStyles.magentaBright("[production]")} ${AnsiStyles.cyan("environment")}");
           break;
         default:
-          print(redPen("❌fatal error: Mode must be set to either 'production' or 'development'!"));
+          print(AnsiStyles.red("✖ fatal error: Mode must be set to either 'production' or 'development'!"));
           exit(1);
       }
     }
