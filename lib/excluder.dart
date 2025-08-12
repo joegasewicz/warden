@@ -28,7 +28,7 @@ class Excluder {
     for (final ext in ignoredExtensions) {
       if (path.endsWith(ext)) {
         if (debug) {
-          log.info("Ignored file - $path with extension - $ext");
+          log.info("ignored file - $path with extension - $ext");
         }
         ignoredExtension = true;
         break;
@@ -42,7 +42,7 @@ class Excluder {
     for (final dir in ignoredDirs) {
       if(path.contains(dir)) {
         if (debug) {
-          log.info("Ignored directory - $dir for path: $path");
+          log.info("ignored directory - $dir for path: $path");
         }
         ignoredDir = true;
         break;

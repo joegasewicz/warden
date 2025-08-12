@@ -1,13 +1,10 @@
 import "dart:io";
-import "package:ansicolor/ansicolor.dart";
+import "package:ansi_styles/ansi_styles.dart";
 import "package:path/path.dart" as p;
 import "package:warden/cli.dart";
 import "package:warden/destination.dart";
 
 abstract class BaseBundler {
-  late AnsiPen greenPen;
-  late AnsiPen redPen;
-  late AnsiPen bluePen;
   late StringBuffer buffer;
   late String bundlePath;
   String dependencyMainFile;
@@ -16,9 +13,6 @@ abstract class BaseBundler {
   late File bundleFile;
 
   BaseBundler(this.destination, {required this.dependencyMainFile}) {
-    greenPen = AnsiPen()..green();
-    redPen = AnsiPen()..red(bold: true);
-    bluePen = AnsiPen()..blue();
     buffer = StringBuffer();
     outputDir = Directory(destination.destination);
     bundlePath = p.join(outputDir.path, "bundle.js");
@@ -45,7 +39,7 @@ abstract class BaseBundler {
     buffer.writeln("");
   }
 
-  void end() {
+  void end(Stopwatch stopwatch) {
     // Bundle main JS file
     if (dependencyMainFile != "") {
       _bundleMainFile(buffer, dependencyMainFile);
@@ -54,14 +48,18 @@ abstract class BaseBundler {
         "// ----------------------  WARDEN << END -------------------- //");
 
     bundleFile.writeAsStringSync(buffer.toString());
-    print(greenPen("[WARDEN]: ✅Bundled JS files into: $bundlePath"));
+    stopwatch.stop();
+    final elapsed = stopwatch.elapsed;
+    print("${AnsiStyles.cyan("✔ bundled JS files into ")}"
+        "${AnsiStyles.greenBright.bold("[$bundlePath]${AnsiStyles.cyan(" took ")}"
+        "${AnsiStyles.white.bold("${elapsed.inSeconds}.${elapsed.inMilliseconds % 1000}s")}")}");
   }
 
   void _bundleMainFile(StringBuffer buffer, String dependencyMainFile) {
     // The compiled output is temporally stored in the destination directory.
     final mainSrc = File(dependencyMainFile);
     if (!mainSrc.existsSync()) {
-      stderr.writeln(redPen("[Warden]: ⛔️ Fatal: missing file for bundling: ${mainSrc.path}"));
+      stderr.writeln(AnsiStyles.red("✖ fatal: missing file for bundling: ${mainSrc.path}"));
       // exit(1);
     } else {
       buffer.writeln(
@@ -96,9 +94,7 @@ class Bundler extends BaseBundler {
     super.destination, {
     required super.dependencyMainFile,
   }) {
-    greenPen = AnsiPen()..green();
-    redPen = AnsiPen()..red(bold: true);
-    bluePen = AnsiPen()..blue();
+
   }
 
   /// Merges and writes JavaScript files into a single `bundle.js` file.
@@ -123,13 +119,13 @@ class Bundler extends BaseBundler {
 
       if (!source.existsSync()) {
         stderr.writeln(
-            redPen("[WARDEN]: ⛔️Missing file for bundling: ${source.path}"));
+            AnsiStyles.red("✖ missing file for bundling: [${source.path}]"));
         continue;
       }
       // Make sure only JS files are included in the bundle
       if (!source.path.endsWith(".js")) {
-        print(bluePen(
-            "[WARDEN]: ⚠️Skipping bundling for none .js file - ${source.path}"));
+        print(AnsiStyles.green(
+            "⚠ skipping bundling for none .js file - [${source.path}]"));
         continue;
       }
       buffer.writeln(

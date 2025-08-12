@@ -1,4 +1,4 @@
-import 'package:ansicolor/ansicolor.dart';
+import 'package:ansi_styles/ansi_styles.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
 import 'package:warden/warden.dart';
@@ -19,7 +19,6 @@ import 'package:warden/warden.dart';
 /// dart run warden --file=example/warden.yaml
 /// ```
 void main(List<String> arguments) async {
-  AnsiPen greenPen = AnsiPen()..green();
   final parser = ArgParser()
     ..addOption("file", abbr: "f", help: "The warden yaml file.")
     ..addFlag("version", abbr: "v", help: "Get the latest Warden version.")
@@ -45,7 +44,7 @@ void main(List<String> arguments) async {
 
   // Create a new instance of Warden
   if (argResults["watch"] == true) {
-    print(greenPen("[WARDEN]: 👀Watching..."));
+    print(AnsiStyles.cyanBright.bold("👀 watching..."));
     final warden = Warden(
         wardenFilePath: wardenFile,
         debug: argResults["debug"],
@@ -55,7 +54,7 @@ void main(List<String> arguments) async {
   }
 
   if (argResults["build"] == true) {
-    print(greenPen("[WARDEN]: 🛠️ Building..."));
+    print(AnsiStyles.cyanBright.bold("🛠️  building..."));
     final warden = Warden(
         wardenFilePath: wardenFile,
         debug: argResults["debug"],
@@ -65,5 +64,5 @@ void main(List<String> arguments) async {
   }
 
   // Print out usage if no flags are set
-  print(parser.usage);
+  print(AnsiStyles.cyan(parser.usage));
 }

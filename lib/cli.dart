@@ -1,4 +1,4 @@
-import 'package:ansicolor/ansicolor.dart';
+import 'package:ansi_styles/ansi_styles.dart';
 
 enum CompileType {
   watch,
@@ -10,9 +10,9 @@ void printLogo() {
 }
 
 String drawLogo() {
-  AnsiPen cyan = AnsiPen()..cyan();
-  AnsiPen bold = AnsiPen()..white(bold: true);
-  var logo = cyan(r"""
+
+
+  var logo = AnsiStyles.cyanBright(r"""
  ___       __   ________  ________  ________  _______   ________      
 |\  \     |\  \|\   __  \|\   __  \|\   ___ \|\  ___ \ |\   ___  \    
 \ \  \    \ \  \ \  \|\  \ \  \|\  \ \  \_|\ \ \   __/|\ \  \\ \  \   
@@ -21,6 +21,6 @@ String drawLogo() {
    \ \____________\ \__\ \__\ \__\\ _\\ \_______\ \_______\ \__\\ \__\
     \|____________|\|__|\|__|\|__|\|__|\|_______|\|_______|\|__| \|__|    
     """);
-  logo += bold("                   Static Builder CLI\n");
+  logo += AnsiStyles.cyan.bold("                        Static Builder CLI\n");
   return logo;
 }
