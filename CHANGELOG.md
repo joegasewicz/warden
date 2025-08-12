@@ -44,3 +44,7 @@
 ## 0.7.0
 * Watch & build modes
 * debug & logging
+
+## 0.8.0
+* Improves CLI visuals.
+* Adds time taken for tasks & bundle times.
