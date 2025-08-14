@@ -131,8 +131,9 @@ class Warden {
       // Recompile
       for (var processor in processors) {
         if (!normalized.contains(destination.destination)) {
-          print(AnsiStyles.green(
-              "🔍Changes detected in ${event.path}. Recompiling"));
+          print(AnsiStyles.cyanBright(
+              "➜ changes detected in ${AnsiStyles.magentaBright.bold("[${event.path}]")} "
+                  "${AnsiStyles.cyanBright.bold("➤ recompiling")}"));
           futures.add(processor.run());
         }
       }
