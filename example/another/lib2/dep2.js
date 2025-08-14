@@ -1,1 +1,1 @@
-console.log("__SADOWSKYs__");
+console.log("__SADOWSKY__");
