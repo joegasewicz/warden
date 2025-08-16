@@ -75,38 +75,24 @@ class Processor {
     stopwatch.stop();
 
     final taskStdOut = result.stdout.toString();
-    final isDartCompileError = arguments.contains("compile");
+    final isDartCompileTask = executable == "dart" && arguments.contains("compile");
+    final isDartCompileError = isDartCompileTask && taskStdOut.contains("Error");
+    // final isDartCompileWarning = isDartCompileTask && taskStdOut.contains("Warning");
 
-    if (result.stdout.toString().trim().isNotEmpty && !isDartCompileError) {
-      stdout.writeln(_printTime(stopwatch, result.stdout));
-      if (debug) {
-        log.info("[task $name] ${AnsiStyles.magenta("[${result.stdout}]")}");
-      }
+    // Print non dart compile errors - e.g `dart sass ...`
+    if (result.stderr.toString().trim().isNotEmpty && !isDartCompileTask) {
+      _printNoneDartCompileTaskErrors(result);
     }
 
-    if (result.stderr.toString().trim().isNotEmpty) {
-      final containsWarning =
-          result.stderr.toString().trim().toLowerCase().contains("warning");
-      final containsError =
-          result.stderr.toString().trim().toLowerCase().contains("error");
-      if (containsWarning && !containsError) {
-        if (warnings) {
-          stderr.writeln(
-              AnsiStyles.yellowBright("⚠ [task $name] ${result.stderr}"));
-        } else {
-          print(_printTime(stopwatch, name));
-        }
-      } else {
-        stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
-        throw ProcessingCompileException();
-      }
-    }
+    // Print non dart compile warnings
+    _printNonDartCompileTaskWarnings(result);
 
     // Print Dart compile errors
-    if (arguments.contains("compile") && taskStdOut.contains("Error")) {
-      print(AnsiStyles.red(
-          "✖ [task $name] ${AnsiStyles.redBright.bold(taskStdOut)}"));
-      throw ProcessingCompileException();
+    if (isDartCompileError) {
+      _printDartCompileTaskErrors(taskStdOut);
+    } else {
+      // All dart tasks get printed here
+      _printDartTaskSuccess(stopwatch);
     }
   }
 
@@ -143,5 +129,38 @@ class Processor {
     return AnsiStyles.cyan("✔ [task ${AnsiStyles.cyanBright.bold(name)}"
         "${AnsiStyles.cyan("] completed task in took ")}"
         "${AnsiStyles.white("${elapsed.inSeconds}.${elapsed.inMilliseconds % 1000}s")}");
+  }
+
+
+  void _printNoneDartCompileTaskErrors(dynamic result) {
+      final containsError =
+          result.stderr.toString().trim().toLowerCase().contains("error");
+      if (containsError) {
+        stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
+        throw ProcessingCompileException();
+      }
+  }
+
+  void _printNonDartCompileTaskWarnings(dynamic result) {
+   final containsWarning =
+          result.stderr.toString().trim().toLowerCase().contains("warning");
+      final containsError =
+          result.stderr.toString().trim().toLowerCase().contains("error");
+      if (containsWarning && !containsError) {
+        if (warnings) {
+          stderr.writeln(
+              AnsiStyles.yellowBright("⚠ [task $name] ${result.stderr}"));
+        }
+      }
+  }
+
+  void _printDartTaskSuccess(Stopwatch stopwatch) {
+    print(_printTime(stopwatch, name));
+  }
+
+  void _printDartCompileTaskErrors(String taskStdOut) {
+    print(AnsiStyles.red(
+            "✖ [task $name] ${AnsiStyles.redBright.bold(taskStdOut)}"));
+        throw ProcessingCompileException();
   }
 }
