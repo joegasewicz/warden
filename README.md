@@ -8,7 +8,7 @@
 
 
 
-**Static builder & bundler for Dart projects**Inspired by Webpack.
+**Static builder & bundler for Dart projects**. Inspired by Webpack.
 
 Warden is a lightweight CLI tool to watch and compile Dart and Sass files for frontend projects that don’t use Flutter, are focused on building to JavaScript for server-side rendered apps, and work with Node-installed packages. It’s ideal for projects that still want custom JS/CSS assets compiled automatically.
 
