@@ -7,17 +7,21 @@ class Mode {
   Mode({required this.mode}) {
     if (mode == null) {
       mode = "development";
-      print(AnsiStyles.yellow("⚠ no mode set. Setting to 'development' environment."));
+      print(AnsiStyles.yellow(
+          "⚠ no mode set. Setting to 'development' environment."));
     } else {
-      switch(mode) {
+      switch (mode) {
         case "development":
-          print("${AnsiStyles.cyan("◆ mode set to")} ${AnsiStyles.magentaBright("[development]")} ${AnsiStyles.cyan("environment")}");
+          print(
+              "${AnsiStyles.cyan("◆ mode set to")} ${AnsiStyles.magentaBright("[development]")} ${AnsiStyles.cyan("environment")}");
           break;
         case "production":
-          print("${AnsiStyles.cyan("◆ mode set to")} ${AnsiStyles.magentaBright("[production]")} ${AnsiStyles.cyan("environment")}");
+          print(
+              "${AnsiStyles.cyan("◆ mode set to")} ${AnsiStyles.magentaBright("[production]")} ${AnsiStyles.cyan("environment")}");
           break;
         default:
-          print(AnsiStyles.red("✖ fatal error: Mode must be set to either 'production' or 'development'!"));
+          print(AnsiStyles.red(
+              "✖ fatal error: Mode must be set to either 'production' or 'development'!"));
           exit(1);
       }
     }
