@@ -10,8 +10,6 @@ void printLogo() {
 }
 
 String drawLogo() {
-
-
   var logo = AnsiStyles.cyanBright(r"""
  ___       __   ________  ________  ________  _______   ________      
 |\  \     |\  \|\   __  \|\   __  \|\   ___ \|\  ___ \ |\   ___  \    

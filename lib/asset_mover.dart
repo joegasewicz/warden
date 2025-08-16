@@ -63,7 +63,8 @@ class AssetMover {
           final targetFile = File(p.join(destDir.path, relative));
           targetFile.createSync(recursive: true);
           targetFile.writeAsBytesSync(entity.readAsBytesSync());
-          print("${AnsiStyles.cyan("✔ copied asset: ")}${AnsiStyles.magenta("[${entity.path} -> ${targetFile.path}]")}");
+          print(
+              "${AnsiStyles.cyan("✔ copied asset: ")}${AnsiStyles.magenta("[${entity.path} -> ${targetFile.path}]")}");
         }
       }
     }
@@ -83,7 +84,8 @@ class AssetMover {
 
       destination.createSync(recursive: true);
       destination.writeAsBytesSync(source.readAsBytesSync());
-      print(AnsiStyles.green("✔ moved [${source.path} -> ${destination.path}]"));
+      print(
+          AnsiStyles.green("✔ moved [${source.path} -> ${destination.path}]"));
     }
   }
 }

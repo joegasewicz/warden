@@ -11,8 +11,10 @@ abstract class BaseBundler {
   late Directory outputDir;
   final Destination destination;
   late File bundleFile;
+  bool debug;
 
-  BaseBundler(this.destination, {required this.dependencyMainFile}) {
+  BaseBundler(this.destination,
+      {required this.dependencyMainFile, required this.debug}) {
     buffer = StringBuffer();
     outputDir = Directory(destination.destination);
     bundlePath = p.join(outputDir.path, "bundle.js");
@@ -52,15 +54,18 @@ abstract class BaseBundler {
     final elapsed = stopwatch.elapsed;
     print("${AnsiStyles.cyan("✔ bundled JS files into ")}"
         "${AnsiStyles.greenBright.bold("[$bundlePath]${AnsiStyles.cyan(" took ")}"
-        "${AnsiStyles.white.bold("${elapsed.inSeconds}.${elapsed.inMilliseconds % 1000}s")}")}");
+            "${AnsiStyles.white.bold("${elapsed.inSeconds}.${elapsed.inMilliseconds % 1000}s")}")}");
   }
 
   void _bundleMainFile(StringBuffer buffer, String dependencyMainFile) {
     // The compiled output is temporally stored in the destination directory.
     final mainSrc = File(dependencyMainFile);
     if (!mainSrc.existsSync()) {
-      stderr.writeln(AnsiStyles.red("✖ fatal: missing file for bundling: ${mainSrc.path}"));
-      // exit(1);
+      if (debug) {
+        // This will be a side effect of the dart compile throwing errors.
+        stderr.writeln(AnsiStyles.red(
+            "✖ fatal: missing file for bundling: ${AnsiStyles.redBright.bold("[${mainSrc.path}]")}"));
+      }
     } else {
       buffer.writeln(
           "// ---------------------------------------------------- //");
@@ -93,9 +98,8 @@ class Bundler extends BaseBundler {
   Bundler(
     super.destination, {
     required super.dependencyMainFile,
-  }) {
-
-  }
+    required super.debug,
+  }) {}
 
   /// Merges and writes JavaScript files into a single `bundle.js` file.
   ///

@@ -4,6 +4,7 @@ import 'package:ansi_styles/ansi_styles.dart';
 import 'package:cli_spinner/cli_spinner.dart';
 import 'package:logging/logging.dart';
 import 'package:warden/environment.dart';
+import 'package:warden/exceptions.dart';
 import 'package:warden/logger.dart';
 import 'package:warden/mode.dart';
 
@@ -58,12 +59,12 @@ class Processor {
   ///
   /// The method returns a [Future] that completes after the command runs.
   dynamic run() async {
-
     if (executable == "dart") {
-        _addStoredEnvironmentVarsToArguments();
+      _addStoredEnvironmentVarsToArguments();
     }
     final stopwatch = Stopwatch()..start();
-    final taskSpinner = Spinner(AnsiStyles.cyan("✔ [task ${AnsiStyles.cyanBright.bold(name)}${AnsiStyles.cyan("] started...")}"));
+    final taskSpinner = Spinner(AnsiStyles.cyan(
+        "✔ [task ${AnsiStyles.cyanBright.bold(name)}${AnsiStyles.cyan("] started...")}"));
     taskSpinner.start();
     var result = await Process.run(
       executable,
@@ -87,16 +88,23 @@ class Processor {
           result.stderr.toString().trim().toLowerCase().contains("error");
       if (containsWarning && !containsError) {
         if (warnings) {
-          stderr.writeln(AnsiStyles.yellowBright("⚠ [task $name] ${result.stderr}"));
-
+          stderr.writeln(
+              AnsiStyles.yellowBright("⚠ [task $name] ${result.stderr}"));
         } else {
           print(_printTime(stopwatch, name));
         }
       } else {
-        stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
+        // stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
       }
     }
 
+    // Print Dart compile errors
+    final taskStdOut = result.stdout.toString();
+    if (arguments.contains("compile") && taskStdOut.contains("Error")) {
+      print(AnsiStyles.red(
+          "✖ [task $name] ${AnsiStyles.redBright.bold(taskStdOut)}"));
+      throw ProcessingCompileException();
+    }
   }
 
   _addVariables() {
@@ -105,7 +113,7 @@ class Processor {
         log.info("Setting development environment variables.");
       }
       environment.devEnvVariables.forEach((k, v) {
-          environmentArguments.add("-D$k=$v");
+        environmentArguments.add("-D$k=$v");
       });
     } else {
       if (debug) {
@@ -120,7 +128,9 @@ class Processor {
   _addStoredEnvironmentVarsToArguments() {
     // We want to be sure that the compile cmd is `dart compile js ...`. As the
     // features develop, we might want to revisit this / make less static.
-    if (arguments.length >= 2 && arguments[0] == "compile" && arguments[1] == "js") {
+    if (arguments.length >= 2 &&
+        arguments[0] == "compile" &&
+        arguments[1] == "js") {
       arguments.addAll(environmentArguments);
     }
   }

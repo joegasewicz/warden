@@ -2,6 +2,7 @@ import "package:ansi_styles/ansi_styles.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as p;
 import "package:warden/environment.dart";
+import "package:warden/exceptions.dart";
 import "package:warden/excluder.dart";
 import "package:warden/logger.dart";
 import "package:warden/main_file.dart";
@@ -69,26 +70,39 @@ class Warden {
       log.info("🐛Debug mode");
     }
 
-    bundler = Bundler(destination, dependencyMainFile: mainFile.src);
+    bundler =
+        Bundler(destination, dependencyMainFile: mainFile.src, debug: debug);
     final List<String> ignoredExtensions = [".tmp", ".DS_Store"];
     final List<String> ignoredDirs = [destination.destination];
 
     excluder = Excluder(
-        ignoredExtensions: ignoredExtensions,
-        ignoredDirs: ignoredDirs,
-        debug: debug,
+      ignoredExtensions: ignoredExtensions,
+      ignoredDirs: ignoredDirs,
+      debug: debug,
     );
   }
 
   watch() async {
-    await _runInitialBuild();
+    try {
+      await _runInitialBuild();
+    } on ProcessingCompileException catch (e) {
+      if (debug) {
+        log.info(e.toString());
+      }
+    }
+
     final watcher = DirectoryWatcher(sourceDirectory.sourceDirectory);
     _runWatcher(watcher);
   }
 
   build() async {
-
-    await _runInitialBuild();
+    try {
+      await _runInitialBuild();
+    } on ProcessingCompileException catch (e) {
+      if (debug) {
+        log.info(e.toString());
+      }
+    }
   }
 
   _runInitialBuild() async {
@@ -117,7 +131,7 @@ class Warden {
   }
 
   _runWatcher(Watcher watcher) {
-     watcher.events.listen((event) async {
+    watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
       // Ignore files
       if (excluder.containsIgnoredFileExt(event.path)) {
@@ -129,17 +143,24 @@ class Warden {
       final stopwatch = Stopwatch()..start();
       final futures = <Future>[];
       // Recompile
-      for (var processor in processors) {
-        if (!normalized.contains(destination.destination)) {
-          print(AnsiStyles.cyanBright(
-              "➜ changes detected in ${AnsiStyles.magentaBright.bold("[${event.path}]")} "
-                  "${AnsiStyles.cyanBright.bold("➤ recompiling")}"));
-          futures.add(processor.run());
+
+      try {
+        for (var processor in processors) {
+          if (!normalized.contains(destination.destination)) {
+            print(AnsiStyles.cyanBright(
+                "➜ changes detected in ${AnsiStyles.magentaBright.bold("[${event.path}]")} "
+                "${AnsiStyles.cyanBright.bold("➤ recompiling")}"));
+            futures.add(processor.run());
+          }
+        }
+        // Wait for all processes to run & then re bundle file
+        await Future.wait(futures);
+        _bundleAndMoveFiles(stopwatch);
+      } on ProcessingCompileException catch (e) {
+        if (debug) {
+          log.info(e.toString());
         }
       }
-      // Wait for all processes to run & then re bundle file
-      await Future.wait(futures);
-      _bundleAndMoveFiles(stopwatch);
     });
   }
 
@@ -213,7 +234,7 @@ class Warden {
   }
 
   void _setMode(dynamic yamlMap) {
-      mode = Mode(mode: yamlMap["mode"] as String?);
+    mode = Mode(mode: yamlMap["mode"] as String?);
   }
 
   void _setMainFile(dynamic yamlMap) {
@@ -246,13 +267,13 @@ class Warden {
       if (devMap != null) {
         devEnvVariables.addAll(Map<String, String>.from(devMap));
       }
-      if (prodMap != null)  {
+      if (prodMap != null) {
         prodEnvVariables.addAll(Map<String, String>.from(prodMap));
       }
     }
     environment = Environment(
-        devEnvVariables: devEnvVariables,
-        prodEnvVariables: prodEnvVariables,
+      devEnvVariables: devEnvVariables,
+      prodEnvVariables: prodEnvVariables,
     );
   }
 
@@ -271,7 +292,7 @@ class Warden {
       bundle: bundle,
       files: List<String>.from(dependency["files"]),
       assetMover: AssetMover(destination: destination, assets: assets),
-      bundler: Bundler(destination, dependencyMainFile: mainFile),
+      bundler: Bundler(destination, dependencyMainFile: mainFile, debug: debug),
     ));
   }
 
