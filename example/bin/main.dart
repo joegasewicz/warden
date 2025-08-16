@@ -4,4 +4,5 @@ void main(List<String> arguments) {
   print("API URL = $apiURL");
   print("CAT Type = $catType");
   print("2");
+  print("2");
 }

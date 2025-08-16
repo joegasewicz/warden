@@ -74,7 +74,10 @@ class Processor {
     taskSpinner.stop();
     stopwatch.stop();
 
-    if (result.stdout.toString().trim().isNotEmpty) {
+    final taskStdOut = result.stdout.toString();
+    final isDartCompileError = arguments.contains("compile");
+
+    if (result.stdout.toString().trim().isNotEmpty && !isDartCompileError) {
       stdout.writeln(_printTime(stopwatch, result.stdout));
       if (debug) {
         log.info("[task $name] ${AnsiStyles.magenta("[${result.stdout}]")}");
@@ -94,12 +97,12 @@ class Processor {
           print(_printTime(stopwatch, name));
         }
       } else {
-        // stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
+        stderr.writeln(AnsiStyles.red("✖ [task $name] ${result.stderr}"));
+        throw ProcessingCompileException();
       }
     }
 
     // Print Dart compile errors
-    final taskStdOut = result.stdout.toString();
     if (arguments.contains("compile") && taskStdOut.contains("Error")) {
       print(AnsiStyles.red(
           "✖ [task $name] ${AnsiStyles.redBright.bold(taskStdOut)}"));
