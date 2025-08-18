@@ -58,3 +58,6 @@
 
 ## 0.8.3
 * Fixes bug not displaying dart compile success message and time
+
+## 0.9.0
+* Adds file compression
