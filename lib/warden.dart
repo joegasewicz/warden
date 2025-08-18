@@ -4,6 +4,7 @@ import "package:path/path.dart" as p;
 import "package:warden/environment.dart";
 import "package:warden/exceptions.dart";
 import "package:warden/excluder.dart";
+import "package:warden/file_compressor.dart";
 import "package:warden/logger.dart";
 import "package:warden/main_file.dart";
 import "package:warden/mode.dart";
@@ -127,7 +128,7 @@ class Warden {
       await processor.run();
     }
     // pre bundle the initial run
-    _bundleAndMoveFiles(stopwatch);
+    await _bundleAndMoveFiles(stopwatch);
   }
 
   _runWatcher(Watcher watcher) {
@@ -155,7 +156,7 @@ class Warden {
         }
         // Wait for all processes to run & then re bundle file
         await Future.wait(futures);
-        _bundleAndMoveFiles(stopwatch);
+        await _bundleAndMoveFiles(stopwatch);
       } on ProcessingCompileException catch (e) {
         if (debug) {
           log.info(e.toString());
@@ -187,7 +188,7 @@ class Warden {
       await processor.run();
     }
     // pre bundle the initial run
-    _bundleAndMoveFiles(stopwatch);
+    await _bundleAndMoveFiles(stopwatch);
 
     watcher.events.listen((event) async {
       final normalized = p.normalize(event.path);
@@ -202,11 +203,11 @@ class Warden {
       }
       // Wait for all processes to run & then re bundle file
       await Future.wait(futures);
-      _bundleAndMoveFiles(stopwatch);
+      await _bundleAndMoveFiles(stopwatch);
     });
   }
 
-  void _bundleAndMoveFiles(Stopwatch stopwatch) {
+  _bundleAndMoveFiles(Stopwatch stopwatch) async {
     bundler.destroyBundleFile();
     // Initiate the String buffer
     bundler.start();
@@ -220,7 +221,7 @@ class Warden {
         dependency.moveAllFiles();
       }
       if (assets.source != "") {
-        dependency.moveAssets();
+        await dependency.moveAssets();
       }
     }
     // Bundle the main file
@@ -287,11 +288,25 @@ class Warden {
     if (dependency["main"] != null) {
       mainFile = dependency["main"] as String;
     }
+
+    // Setup file compression from asset yaml options
+    int quality = 100;
+    if (assets.compress["quality"] != null) {
+     quality = assets.compress["quality"];
+    }
+    FileCompressor fileCompressor = FileCompressor(
+        quality: quality,
+    );
+
     dependencies.add(Dependency(
       source: dependency["source"] as String,
       bundle: bundle,
       files: List<String>.from(dependency["files"]),
-      assetMover: AssetMover(destination: destination, assets: assets),
+      assetMover: AssetMover(
+          destination: destination,
+          assets: assets,
+          fileCompressor: fileCompressor,
+      ),
       bundler: Bundler(destination, dependencyMainFile: mainFile, debug: debug),
     ));
   }
@@ -317,6 +332,7 @@ class Warden {
   _setAssets(dynamic yamlMap) {
     var assetResult = yamlMap["assets"];
     String source = "";
+    Map<String, dynamic> compress = {};
     List<String> directories = [];
     if (assetResult != null && assetResult["source"] != null) {
       source = assetResult["source"];
@@ -324,9 +340,33 @@ class Warden {
     if (assetResult != null && assetResult["directories"] != null) {
       directories = List<String>.from(assetResult["directories"]);
     }
+    if (assetResult != null && assetResult["compress"] != null) {
+      if (assetResult["compress"]["quality"] != null) {
+        compress = {
+          "quality": assetResult["compress"]["quality"],
+          "use": true,
+        };
+        print(AnsiStyles.cyan("◆ setting file compression to [${AnsiStyles.cyanBright.bold("${compress['quality']}%")}]"));
+      } else {
+        compress = {
+          "quality": 80,
+          "use": true,
+        };
+        print(AnsiStyles.cyan("◆ setting file compression to default [${AnsiStyles.cyanBright.bold("${compress['quality']}%")}]"));
+        log.info(AnsiStyles.yellow("Setting image compression quality default: ${compress["quality"]}"));
+      }
+      /// The fileCompressor is still get created but passing `use: false` will equate to a no op.
+      if (assetResult["compress"] == null) {
+       compress = {
+          "quality": 100,
+          "use": false,
+        };
+      }
+    }
     assets = Asset(
       source: source,
       directories: directories,
+      compress: compress,
     );
   }
 }

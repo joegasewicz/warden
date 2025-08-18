@@ -24,8 +24,8 @@ class Dependency {
     assetMover.moveFilesExclSuffix(".js", files, source);
   }
 
-  void moveAssets() {
-    assetMover.moveAssets();
+  moveAssets() async {
+    await assetMover.moveAssets();
   }
 
   void bundleFiles(StringBuffer buffer) {

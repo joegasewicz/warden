@@ -21,6 +21,8 @@ assets:
   source: example/assets
   directories:
     - img
+  compress:
+    quality: 20
 
 tasks:
   frontend:
