@@ -105,6 +105,8 @@ assets:
   source: example/assets
   directories:
     - img  # Copies `example/assets/img` → `example/static/img`
+  compress:
+    quality: 70  # File compression for your shipped file assets
 
 # ==============================
 # Build Tasks
