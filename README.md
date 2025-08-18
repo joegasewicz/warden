@@ -8,7 +8,7 @@
 
 
 
-**Static builder & bundler for Dart projects**
+**Static builder & bundler for Dart projects**. Inspired by Webpack.
 
 Warden is a lightweight CLI tool to watch and compile Dart and Sass files for frontend projects that don’t use Flutter, are focused on building to JavaScript for server-side rendered apps, and work with Node-installed packages. It’s ideal for projects that still want custom JS/CSS assets compiled automatically.
 
@@ -46,11 +46,16 @@ warden --file=warden.yaml
 ### ▶️ Running
 Run Warden in **watch mode**:
 ```bash
-dart run warden --file=warden.yaml --watch
+
+warden --watch
+# Or define the file path is not in the project root.
+warden --file=warden.yaml --watch
 ```
 Or for a one-off build:
 ```bash
-dart run warden --file=warden.yaml --build
+warden --build
+# Or define the file path is not in the project root.
+warden --file=warden.yaml --build
 ```
 **Debug mode** (development) will show verbose file change and build logs.  
 Switch to **production** to build optimised/minified JS and CSS.

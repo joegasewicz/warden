@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 import 'package:warden/logger.dart';
 
 class Excluder {
-
   List<String> ignoredExtensions;
   List<String> ignoredDirs;
   bool debug;
@@ -18,7 +17,7 @@ class Excluder {
     // Remove all end slashes from dir paths
     for (var i = 0; i < ignoredDirs.length; i++) {
       if (ignoredDirs[i].endsWith(Platform.pathSeparator)) {
-        ignoredDirs[i] = ignoredDirs[i].substring(0, ignoredDirs[i].length -1);
+        ignoredDirs[i] = ignoredDirs[i].substring(0, ignoredDirs[i].length - 1);
       }
     }
   }
@@ -40,7 +39,7 @@ class Excluder {
   containsExcludedDirs(String path) {
     bool ignoredDir = false;
     for (final dir in ignoredDirs) {
-      if(path.contains(dir)) {
+      if (path.contains(dir)) {
         if (debug) {
           log.info("ignored directory - $dir for path: $path");
         }
@@ -50,5 +49,4 @@ class Excluder {
     }
     return ignoredDir;
   }
-
 }

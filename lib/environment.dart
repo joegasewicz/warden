@@ -1,5 +1,3 @@
-
-
 import 'package:ansi_styles/ansi_styles.dart';
 
 class Environment {
@@ -11,11 +9,12 @@ class Environment {
     required this.prodEnvVariables,
   }) {
     if (devEnvVariables.isNotEmpty) {
-      print("${AnsiStyles.green("◆")} ${AnsiStyles.cyan("dev environment variables set successfully:")}");
+      print(
+          "${AnsiStyles.green("◆")} ${AnsiStyles.cyan("dev environment variables set successfully:")}");
       devEnvVariables.forEach((key, value) {
-        print("\t ${AnsiStyles.blueBright("◆")} ${AnsiStyles.cyan("$key: ")}${AnsiStyles.magenta("[$value]")}");
+        print(
+            "\t ${AnsiStyles.blueBright("◆")} ${AnsiStyles.cyan("$key: ")}${AnsiStyles.magenta("[$value]")}");
       });
     }
   }
-
 }

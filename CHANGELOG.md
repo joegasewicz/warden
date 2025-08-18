@@ -48,3 +48,13 @@
 ## 0.8.0
 * Improves CLI visuals.
 * Adds time taken for tasks & bundle times.
+
+## 0.8.1
+* Dart compile errors are now displayed in the terminal & the bundling is restricted until the errors are fixed by the end user.
+
+## 0.8.2
+* Removed false positive task output.
+* Added better error logging to generate non compile tasks.
+
+## 0.8.3
+* Fixes bug not displaying dart compile success message and time
