@@ -3,6 +3,7 @@ import "package:ansi_styles/ansi_styles.dart";
 import "package:path/path.dart" as p;
 import "package:warden/assets.dart";
 import "package:warden/destination.dart";
+import "package:warden/file_compressor.dart";
 
 /// The `AssetMover` class is responsible for copying third-party frontend assets
 /// (like JavaScript or CSS files) from a `node_modules` source directory to a public
@@ -16,14 +17,20 @@ import "package:warden/destination.dart";
 class AssetMover {
   final Destination destination;
   final Asset assets;
+  final FileCompressor fileCompressor;
   late Directory nodeModules;
   late Directory outputDir;
+  bool shouldCompress = false;
 
   AssetMover({
     required this.destination,
     required this.assets,
+    required this.fileCompressor,
   }) {
     outputDir = Directory(destination.destination);
+    if (assets.compress["use"] != null) {
+      shouldCompress = assets.compress["use"];
+    }
   }
 
   /// Copies each file defined in `dependencies.files` from the `node_modules` directory
@@ -47,7 +54,7 @@ class AssetMover {
     _move(nonJSFiles, dependencySrc);
   }
 
-  void moveAssets() {
+  moveAssets() async {
     for (final dirName in assets.directories) {
       final sourceDir = Directory(p.join(assets.source, dirName));
       final destDir = Directory(p.join(outputDir.path, dirName));
@@ -63,8 +70,17 @@ class AssetMover {
           final targetFile = File(p.join(destDir.path, relative));
           targetFile.createSync(recursive: true);
           targetFile.writeAsBytesSync(entity.readAsBytesSync());
-          print(
+          if (shouldCompress) {
+            await _compress(targetFile.path);
+            print(
+              "${AnsiStyles.cyan("✔ copied asset:\n")}"
+              "${AnsiStyles.magenta("\t ◉ [${entity.path} ${AnsiStyles.cyanBright.bold("${_getSize(entity.path)}kb")}] ->\n")}"
+              "${AnsiStyles.magenta("\t ◉ [${targetFile.path} ${AnsiStyles.cyanBright.bold("${_getSize(targetFile.path)}kb")}]\n")}"
+            );
+          } else {
+           print(
               "${AnsiStyles.cyan("✔ copied asset: ")}${AnsiStyles.magenta("[${entity.path} -> ${targetFile.path}]")}");
+          }
         }
       }
     }
@@ -87,5 +103,16 @@ class AssetMover {
       print(
           AnsiStyles.green("✔ moved [${source.path} -> ${destination.path}]"));
     }
+  }
+
+  Future<void> _compress(String filename) async {
+    await fileCompressor.compress(filename);
+  }
+
+  /// Returns file size in mb
+  int _getSize(String filename) {
+    final file = File(filename);
+    double size = file.lengthSync() / 1024;
+    return double.parse(size.toStringAsFixed(0)).toInt();
   }
 }
