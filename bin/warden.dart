@@ -1,7 +1,31 @@
+import 'dart:ffi';
+import 'dart:io';
+import 'dart:isolate';
+
 import 'package:ansi_styles/ansi_styles.dart';
 import 'package:args/args.dart';
 import 'package:warden/cli.dart';
 import 'package:warden/warden.dart';
+
+
+Future<Map<String, dynamic>> _loadDartConfig(String path) async {
+  final file = File(path);
+  if (!file.existsSync()) {
+    stderr.writeln("Config Dart file not found: $path");
+    exitCode = 2;
+    return {};
+  }
+
+  final rp = ReceivePort();
+  final uri = file.absolute.uri;
+
+  final isolate = await Isolate.spawnUri(uri, const [], rp.sendPort);
+  final msg = await rp.first;
+  rp.close();
+  isolate.kill(priority: Isolate.immediate);
+
+  return (msg as Map).cast<String, dynamic>();
+}
 
 /// Entry point for the Warden CLI.
 ///
@@ -19,6 +43,7 @@ import 'package:warden/warden.dart';
 /// dart run warden --file=example/warden.yaml
 /// ```
 void main(List<String> arguments) async {
+
   final parser = ArgParser()
     ..addOption("file", abbr: "f", help: "The warden yaml file.")
     ..addFlag("version", abbr: "v", help: "Get the latest Warden version.")
@@ -34,6 +59,14 @@ void main(List<String> arguments) async {
     print("v0.7.0");
     return;
   }
+
+  final wardenRedFile = argResults.wasParsed("file") ? argResults["file"] : "warden.yaml";
+  Map<String, dynamic>? configMap;
+  if (wardenRedFile.toString().endsWith(".dart")) { // TODO .endsWth(".dart")
+    configMap = await _loadDartConfig(wardenRedFile);
+  }
+
+  print("here--------> $configMap");
 
   String wardenFile = "warden.yaml";
   if (argResults.wasParsed("file")) {
