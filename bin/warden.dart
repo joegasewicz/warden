@@ -79,6 +79,7 @@ void main(List<String> arguments) async {
   if (argResults["watch"] == true) {
     print(AnsiStyles.cyanBright.bold("👀 watching..."));
     final warden = Warden(
+        config: configMap!,
         wardenFilePath: wardenFile,
         debug: argResults["debug"],
     );
@@ -89,6 +90,7 @@ void main(List<String> arguments) async {
   if (argResults["build"] == true) {
     print(AnsiStyles.cyanBright.bold("🛠️  building..."));
     final warden = Warden(
+        config: configMap!,
         wardenFilePath: wardenFile,
         debug: argResults["debug"],
     );

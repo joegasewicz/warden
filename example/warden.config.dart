@@ -5,10 +5,14 @@ Map<String, dynamic> config = {
   "mode": "development",
   "destination": "example/static",
   "mainFile": "example/static/main.js",
-  "dependencies":  [
-    "bootstrap/dist/js/bootstrap.min.js",
-    "bootstrap/scss/bootstrap.scss",
-  ],
+  "dependencies":  {
+    "source": "examples/node_modules",
+    "bundle": true,
+    "files": [
+      "bootstrap/dist/js/bootstrap.min.js",
+      "bootstrap/scss/bootstrap.scss",
+    ]
+  },
   "assets": {
     "source": "examples/assets",
     "directories": ["img"],
@@ -22,6 +26,7 @@ Map<String, dynamic> config = {
         "executable": "dart",
         "args": ["compile", "js", "bin/main.dart", "-O4", "-o", "static/main.js"],
         "src": "example",
+        "warnings": false,
       }
     },
     {
