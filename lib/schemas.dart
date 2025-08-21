@@ -30,8 +30,8 @@ class ConfigSchema {
         debug: m["debug"] ?? true,
         denpendencies: DependencySchema.fromMap(m["dependencies"] as Map? ?? const {}),
         assets: AssetSchema.fromMap(m["assets"] as Map? ?? const {}),
-        tasks: ConfigSchema.getTaskList(m),
-        environments: environments,
+        tasks: getTaskList(m),
+        environments: getEnvironmentMap(m),
     );
   }
 
@@ -64,6 +64,10 @@ class ConfigSchema {
       tasks.add(TaskSchema.fromMap(taskInner, taskName));
     }
     return tasks;
+  }
+
+  static EnvironmentSchema getEnvironmentMap(Map m) {
+    return const {} as EnvironmentSchema;
   }
 }
 
