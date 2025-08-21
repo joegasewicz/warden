@@ -309,7 +309,8 @@ class Warden {
   }
 
   void _setTasks(Map<String, dynamic> conf) {
-    List<Map<String, dynamic>> tasks = conf["tasks"];
+    final tasks = conf["tasks"] as List<dynamic>? ?? const [];
+
     for (final task in tasks) {
       var warnings = true;
       if (task["warnings"] as bool != null) {
