@@ -36,6 +36,7 @@ import 'package:watcher/watcher.dart';
 /// dart run warden --file=warden.yaml
 /// ```
 class Warden {
+  Map<String, dynamic> config;
   List<Processor> processors = [];
   final String wardenFilePath;
   final bool debug;
@@ -52,20 +53,18 @@ class Warden {
   Logger log = createLogger();
 
   Warden({
+    required this.config,
     required this.wardenFilePath,
     required this.debug,
   }) {
-    File wardenFile = File(wardenFilePath);
-    String fileContent = wardenFile.readAsStringSync();
-    dynamic yamlMap = loadYaml(fileContent);
-    _setSourceDirectory(yamlMap);
-    _setMode(yamlMap);
-    _setMainFile(yamlMap);
-    _setDestination(yamlMap);
-    _setAssets(yamlMap);
-    _setDependencies(yamlMap);
-    _setTasks(yamlMap);
-    _setEnvironment(yamlMap);
+    _setSourceDirectory(config);
+    _setMode(config);
+    _setMainFile(config);
+    _setDestination(config);
+    _setAssets(config);
+    _setDependencies(config);
+    _setTasks(config);
+    _setEnvironment(config);
 
     if (debug) {
       log.info("🐛Debug mode");
@@ -228,32 +227,30 @@ class Warden {
     bundler.end(stopwatch);
   }
 
-  void _setSourceDirectory(dynamic yamlMap) {
+  void _setSourceDirectory(Map<String, dynamic> conf) {
     sourceDirectory = SourceDirectory(
-      sourceDirectory: yamlMap["source_dir"] as String,
+      sourceDirectory: conf["sourceDir"] as String,
     );
   }
 
-  void _setMode(dynamic yamlMap) {
-    mode = Mode(mode: yamlMap["mode"] as String?);
+  void _setMode(Map<String, dynamic> yamlMap) {
+    mode = Mode(mode: config["mode"] as String?);
   }
 
-  void _setMainFile(dynamic yamlMap) {
+  void _setMainFile(Map<String, dynamic> conf) {
     mainFile = MainFile(
-      src: yamlMap["main_file"] as String,
+      src: conf["mainFile"] as String,
     );
   }
 
-  void _setDestination(dynamic yamlMap) {
-    destination = Destination(destination: yamlMap["destination"] as String);
+  void _setDestination(Map<String, dynamic> conf) {
+    destination = Destination(destination: conf["destination"] as String);
   }
 
-  void _setDependencies(dynamic yamlMap) {
-    final dependencyData = yamlMap["dependencies"];
+  void _setDependencies(Map<String, dynamic> conf) {
+    final dependencyData = conf["dependencies"];
     for (var dependency in dependencyData) {
-      if (dependency is YamlMap) {
-        _setDependency(Map<String, dynamic>.from(dependency));
-      }
+      _setDependency(Map<String, dynamic>.from(dependency));
     }
   }
 
@@ -285,7 +282,7 @@ class Warden {
     if (dependency["bundle"] != null) {
       bundle = dependency["bundle"] as bool;
     }
-    if (dependency["main"] != null) {
+    if (dependency["main"] != null) {// TODO what's this??
       mainFile = dependency["main"] as String;
     }
 
@@ -311,10 +308,12 @@ class Warden {
     ));
   }
 
-  void _setTasks(dynamic yamlMap) {
-    yamlMap['tasks'].forEach((key, value) {
+  void _setTasks(Map<String, dynamic> conf) {
+    final tasks = conf["tasks"] as List<dynamic>? ?? const [];
+
+    for (final task in tasks) {
       var warnings = true;
-      if (value["warnings"] != null) {
+      if (task["warnings"] as bool != null) {
         warnings = value["warnings"] as bool;
       }
 
