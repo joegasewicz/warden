@@ -61,3 +61,6 @@
 
 ## 0.9.0
 * Adds file compression
+
+## 0.9.1
+* Fixes duplicate asset moves.
