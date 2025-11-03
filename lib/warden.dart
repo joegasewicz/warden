@@ -208,6 +208,7 @@ class Warden {
   }
 
   _bundleAndMoveFiles(Stopwatch stopwatch) async {
+
     bundler.destroyBundleFile();
     // Initiate the String buffer
     bundler.start();
@@ -218,12 +219,29 @@ class Warden {
         dependency.bundleFiles(bundler.buffer);
         dependency.moveFilesExclSuffix();
       } else {
-        dependency.moveAllFiles();
-      }
-      if (assets.source != "") {
-        await dependency.moveAssets();
+          dependency.moveAllFiles();
       }
     }
+
+    // Setup file compression from asset yaml options
+    int quality = 100;
+    if (assets.compress["quality"] != null) {
+     quality = assets.compress["quality"];
+    }
+    FileCompressor fileCompressor = FileCompressor(
+        quality: quality,
+    );
+
+    var assetMover = AssetMover(
+      destination: destination,
+      assets: assets,
+      fileCompressor: fileCompressor,
+    );
+
+    if (assets.source != "") {
+      assetMover.moveAssets();
+    }
+
     // Bundle the main file
     bundler.end(stopwatch);
   }
